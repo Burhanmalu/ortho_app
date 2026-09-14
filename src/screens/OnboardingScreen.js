@@ -1,27 +1,28 @@
 // ========================================
-// Onboarding Screen
+// Onboarding Screen - Redesigned
 // ========================================
 import { navigate } from '../router.js';
+import { icons } from '../data/icons.js';
 import * as store from '../store.js';
 
 const slides = [
   {
-    icon: '🦵',
-    bg: '#E3F2F7',
-    title: 'Support Every Step',
-    desc: 'Explore a wide range of orthopedic supports and braces designed for your comfort and mobility.',
+    iconSvg: icons.knee,
+    bg: 'rgba(23, 107, 135, 0.08)',
+    title: 'Certified Orthopedic Supports',
+    desc: 'Explore hospital-grade braces, cervical collars, and joint stabilizers engineered for everyday mobility.',
   },
   {
-    icon: '🚶',
-    bg: '#E8F7EF',
-    title: 'Comfort Meets Mobility',
-    desc: 'From walking aids to rehabilitation equipment — find the right mobility solution for your needs.',
+    iconSvg: icons.mobility,
+    bg: 'rgba(57, 169, 107, 0.08)',
+    title: 'Mobility Meets Clinical Precision',
+    desc: 'Ergonomic walking aids, crutches, and rehabilitation gear vetted by leading orthopedic surgeons.',
   },
   {
-    icon: '📦',
-    bg: '#F0E8F7',
-    title: 'Orthopedic Care, Delivered',
-    desc: 'Quality orthopedic products delivered to your doorstep with easy returns and secure payments.',
+    iconSvg: icons.package,
+    bg: 'rgba(18, 59, 74, 0.08)',
+    title: 'Healthcare Express Delivery',
+    desc: 'Sterile medical equipment delivered securely to your door with verified GST compliance and easy returns.',
   },
 ];
 
@@ -34,8 +35,8 @@ export default function OnboardingScreen(appEl) {
     <div class="onboarding-slides">
       ${slides.map((s, i) => `
         <div class="onboarding-slide ${i === 0 ? 'active' : ''}" data-slide="${i}">
-          <div class="onboarding-illustration" style="background:${s.bg}">
-            <span style="font-size:80px">${s.icon}</span>
+          <div class="onboarding-illustration" style="background:${s.bg}; display:flex; align-items:center; justify-content:center">
+            <span style="width:72px; height:72px; color:var(--primary); display:inline-flex">${s.iconSvg}</span>
           </div>
           <h2 class="onboarding-title">${s.title}</h2>
           <p class="onboarding-desc">${s.desc}</p>
@@ -48,7 +49,7 @@ export default function OnboardingScreen(appEl) {
       </div>
       <div class="onboarding-actions">
         <button class="onboarding-skip" id="ob-skip">Skip</button>
-        <button class="btn btn-primary btn-pill" id="ob-next">Next →</button>
+        <button class="btn btn-primary" id="ob-next" style="padding:0 24px; height:44px">Next</button>
       </div>
     </div>
   `;
@@ -70,7 +71,7 @@ export default function OnboardingScreen(appEl) {
     if (current === slides.length - 1) {
       nextBtn.textContent = 'Get Started';
     } else {
-      nextBtn.textContent = 'Next →';
+      nextBtn.textContent = 'Next';
     }
   }
 

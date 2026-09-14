@@ -1,53 +1,63 @@
 // ========================================
-// Admin Order Management (Retail & Wholesale)
+// Admin Order Management Screen (Retail & Wholesale)
+// Status Pills + Clean Channel Tabs + Invoice Modal
 // ========================================
 
 import { navigate } from '../../router.js';
 import * as store from '../../store.js';
 import { formatPrice } from '../../data/products.js';
+import { icons } from '../../data/icons.js';
 import { renderAdminLayout } from './AdminLayout.js';
-import { showGSTTaxInvoiceModal, showModal } from '../../components/index.js';
+import { showGSTTaxInvoiceModal } from '../../components/index.js';
 
 export default function AdminOrdersScreen(appEl, initialChannel = 'wholesale') {
   const content = document.createElement('div');
 
-  let activeChannel = initialChannel; // 'retail' | 'wholesale'
+  let activeChannel = initialChannel; // 'wholesale' | 'retail'
 
   content.innerHTML = `
-    <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:20px; flex-wrap:wrap; gap:12px">
+    <!-- Header with Channel Switcher -->
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px">
       <div>
-        <h1 style="font-size:24px; font-weight:800; color:#0f172a; margin:0 0 4px">Order Processing & Fulfillment</h1>
-        <div style="font-size:13px; color:#64748b">Fulfill retail dispatches and allocate wholesale heavy cargo freight</div>
+        <h1 style="font-size:22px;font-weight:700;color:var(--text);margin:0 0 2px">Order Management</h1>
+        <div style="font-size:13px;color:var(--text-secondary)">Fulfill B2C consumer dispatches and B2B hospital bulk freight</div>
       </div>
-      <div style="display:flex; gap:8px">
-        <button class="filter-chip ${activeChannel === 'wholesale' ? 'active' : ''}" id="tab-btn-wholesale">
-          🏢 Wholesale B2B Orders (${store.getWholesaleOrders().length})
+      <div style="display:flex;gap:8px" id="order-channel-tabs">
+        <button class="btn ${activeChannel === 'wholesale' ? 'btn-primary' : 'btn-secondary'} btn-sm" id="tab-btn-wholesale">
+          ${icons.building} Wholesale Orders (${store.getWholesaleOrders().length})
         </button>
-        <button class="filter-chip ${activeChannel === 'retail' ? 'active' : ''}" id="tab-btn-retail">
-          🛒 Retail B2C Orders (${store.getOrders().length})
+        <button class="btn ${activeChannel === 'retail' ? 'btn-primary' : 'btn-secondary'} btn-sm" id="tab-btn-retail">
+          ${icons.cart} Retail Orders (${store.getOrders().length})
         </button>
       </div>
     </div>
 
-    <div class="admin-card">
-      <div class="admin-table-container">
-        <table class="admin-table">
-          <thead>
-            <tr>
-              <th>Order ID</th>
-              <th>Date</th>
-              <th>Customer / Buyer</th>
-              <th>Items & Units</th>
-              <th>Total Amount</th>
-              <th>Current Status</th>
-              <th style="text-align:right">Update Status & Invoicing</th>
-            </tr>
-          </thead>
-          <tbody id="orders-tbody"></tbody>
-        </table>
-      </div>
+    <!-- Orders Table / Cards -->
+    <div class="admin-table-container">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Order Ref</th>
+            <th>Date</th>
+            <th>Customer / Entity</th>
+            <th>Items / Volume</th>
+            <th>Amount</th>
+            <th>Status Pill</th>
+            <th style="text-align:right">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="orders-tbody"></tbody>
+      </table>
     </div>
   `;
+
+  function getStatusClass(status) {
+    const s = (status || '').toLowerCase();
+    if (s === 'delivered' || s === 'completed') return 'success';
+    if (s === 'processing' || s === 'shipped' || s === 'out for delivery' || s === 'confirmed') return 'processing';
+    if (s === 'cancelled' || s === 'refunded') return 'danger';
+    return 'warning';
+  }
 
   function renderOrdersTable() {
     const tbody = content.querySelector('#orders-tbody');
@@ -58,122 +68,99 @@ export default function AdminOrdersScreen(appEl, initialChannel = 'wholesale') {
         const totalUnits = (o.items || []).reduce((s, it) => s + it.qty, 0);
         return `
           <tr>
-            <td>
-              <strong style="color:#0f3647; font-size:14px">${o.id}</strong><br>
-              <small style="color:#64748b">INV-${o.id}</small>
+            <td data-label="Order Ref">
+              <strong style="color:var(--primary);font-size:13px">${o.id}</strong>
+              <div style="font-size:11px;color:var(--text-secondary)">Tax Inv: INV-${o.id}</div>
             </td>
-            <td>${o.date}</td>
-            <td>
-              <strong style="color:#0f172a">${o.businessName}</strong><br>
-              <small style="color:#64748b">GSTIN: ${o.gstin}</small>
+            <td data-label="Date">${o.date || '14 Sep 2026'}</td>
+            <td data-label="Entity">
+              <strong style="color:var(--text)">${o.businessName}</strong>
+              <div style="font-size:11px;color:var(--text-secondary)">GSTIN: ${o.gstin}</div>
             </td>
-            <td>
-              <strong>${totalUnits} Units</strong><br>
-              <small style="color:#64748b">${(o.items || []).length} SKU(s)</small>
+            <td data-label="Volume">
+              <strong>${totalUnits} Units</strong> (${(o.items || []).length} SKUs)
             </td>
-            <td>
-              <strong style="color:#0f172a">${formatPrice(o.total)}</strong><br>
-              <small style="color:#16a34a">GST 18% Inc.</small>
+            <td data-label="Amount">
+              <strong>${formatPrice(o.total)}</strong>
+              <div style="font-size:10px;color:var(--text-secondary)">18% GST Included</div>
             </td>
-            <td>
-              <span class="admin-status-badge ${o.status}">
-                ● ${o.status.toUpperCase()}
-              </span>
+            <td data-label="Status">
+              <span class="status-pill ${getStatusClass(o.status)}">${o.status.toUpperCase()}</span>
             </td>
-            <td style="text-align:right">
-              <div style="display:flex; gap:6px; justify-content:flex-end">
-                <button class="admin-btn admin-btn-secondary admin-btn-sm btn-view-b2b-inv" data-id="${o.id}">
-                  🧾 Invoice
-                </button>
-                <select class="select-order-status input" data-id="${o.id}" data-type="wholesale" style="font-size:11px; padding:4px 8px; width:120px">
-                  <option value="pending" ${o.status === 'pending' ? 'selected' : ''}>Pending</option>
-                  <option value="processing" ${o.status === 'processing' ? 'selected' : ''}>Processing</option>
-                  <option value="shipped" ${o.status === 'shipped' ? 'selected' : ''}>Shipped</option>
-                  <option value="delivered" ${o.status === 'delivered' ? 'selected' : ''}>Delivered</option>
-                  <option value="cancelled" ${o.status === 'cancelled' ? 'selected' : ''}>Cancelled</option>
-                </select>
-              </div>
+            <td data-label="Actions" style="text-align:right">
+              <button class="btn btn-secondary btn-sm btn-view-invoice" data-id="${o.id}">
+                ${icons.fileText} Tax Invoice
+              </button>
             </td>
           </tr>
         `;
       }).join('');
-
-      tbody.querySelectorAll('.btn-view-b2b-inv').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const ord = orders.find(o => o.id === btn.dataset.id);
-          if (ord) showGSTTaxInvoiceModal(ord);
-        });
-      });
-
     } else {
       const orders = store.getOrders();
+      if (orders.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:36px;color:var(--text-secondary)">No retail orders placed yet.</td></tr>`;
+        return;
+      }
       tbody.innerHTML = orders.map(o => {
         const totalUnits = (o.items || []).reduce((s, it) => s + it.qty, 0);
         return `
           <tr>
-            <td><strong>${o.id}</strong></td>
-            <td>${o.date}</td>
-            <td>
-              <strong>Rahul Sharma</strong><br>
-              <small style="color:#64748b">Delhi • ${o.address}</small>
+            <td data-label="Order Ref">
+              <strong style="color:var(--primary);font-size:13px">${o.id}</strong>
             </td>
-            <td>${totalUnits} unit(s)</td>
-            <td><strong>${formatPrice(o.total)}</strong></td>
-            <td><span class="admin-status-badge ${o.status}">● ${o.status.toUpperCase()}</span></td>
-            <td style="text-align:right">
-              <div style="display:flex; gap:6px; justify-content:flex-end">
-                <select class="select-order-status input" data-id="${o.id}" data-type="retail" style="font-size:11px; padding:4px 8px; width:120px">
-                  <option value="processing" ${o.status === 'processing' ? 'selected' : ''}>Processing</option>
-                  <option value="shipped" ${o.status === 'shipped' ? 'selected' : ''}>Shipped</option>
-                  <option value="delivered" ${o.status === 'delivered' ? 'selected' : ''}>Delivered</option>
-                  <option value="cancelled" ${o.status === 'cancelled' ? 'selected' : ''}>Cancelled</option>
-                </select>
-              </div>
+            <td data-label="Date">${o.date || 'Today'}</td>
+            <td data-label="Customer">
+              <strong style="color:var(--text)">${o.shippingAddress ? o.shippingAddress.name : 'Patient / Retail'}</strong>
+              <div style="font-size:11px;color:var(--text-secondary)">${o.shippingAddress ? o.shippingAddress.city : 'Indore'}</div>
+            </td>
+            <td data-label="Items">
+              <strong>${totalUnits} Units</strong> (${(o.items || []).length} Items)
+            </td>
+            <td data-label="Amount">
+              <strong>${formatPrice(o.total)}</strong>
+            </td>
+            <td data-label="Status">
+              <span class="status-pill ${getStatusClass(o.status || 'Confirmed')}">${(o.status || 'Confirmed').toUpperCase()}</span>
+            </td>
+            <td data-label="Actions" style="text-align:right">
+              <button class="btn btn-secondary btn-sm btn-view-invoice" data-id="${o.id}">
+                ${icons.fileText} Details
+              </button>
             </td>
           </tr>
         `;
       }).join('');
     }
 
-    // Status change handler
-    tbody.querySelectorAll('.select-order-status').forEach(sel => {
-      sel.addEventListener('change', (e) => {
-        const id = sel.dataset.id;
-        const type = sel.dataset.type;
-        const newStatus = e.target.value;
-
-        if (type === 'wholesale') {
-          if (newStatus === 'shipped') {
-            const awb = prompt('Enter Blue Dart / GATI Consignment AWB:', 'BLUEDT-WHO-' + Math.floor(100000 + Math.random() * 900000));
-            store.updateWholesaleOrderStatus(id, newStatus, awb ? { awb, status: 'In Transit — Heavy Freight Dispatched' } : null);
-          } else {
-            store.updateWholesaleOrderStatus(id, newStatus);
-          }
-        } else {
-          store.updateRetailOrderStatus(id, newStatus);
+    tbody.querySelectorAll('.btn-view-invoice').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const orderId = btn.dataset.id;
+        const allOrders = [...store.getWholesaleOrders(), ...store.getOrders()];
+        const targetOrder = allOrders.find(x => String(x.id) === String(orderId));
+        if (targetOrder) {
+          showGSTTaxInvoiceModal(targetOrder);
         }
-        renderOrdersTable();
       });
     });
   }
 
   content.querySelector('#tab-btn-wholesale').addEventListener('click', () => {
     activeChannel = 'wholesale';
-    content.querySelector('#tab-btn-wholesale').classList.add('active');
-    content.querySelector('#tab-btn-retail').classList.remove('active');
+    content.querySelector('#tab-btn-wholesale').className = 'btn btn-primary btn-sm';
+    content.querySelector('#tab-btn-retail').className = 'btn btn-secondary btn-sm';
     renderOrdersTable();
   });
 
   content.querySelector('#tab-btn-retail').addEventListener('click', () => {
     activeChannel = 'retail';
-    content.querySelector('#tab-btn-retail').classList.add('active');
-    content.querySelector('#tab-btn-wholesale').classList.remove('active');
+    content.querySelector('#tab-btn-retail').className = 'btn btn-primary btn-sm';
+    content.querySelector('#tab-btn-wholesale').className = 'btn btn-secondary btn-sm';
     renderOrdersTable();
   });
 
   renderOrdersTable();
 
-  const fullLayout = renderAdminLayout(activeChannel === 'wholesale' ? 'wholesale-orders' : 'orders', content);
-  appEl.appendChild(fullLayout);
-  return fullLayout;
+  const layout = renderAdminLayout(activeChannel === 'wholesale' ? 'wholesale-orders' : 'orders', content);
+  appEl.appendChild(layout);
+  return layout;
 }

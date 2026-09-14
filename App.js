@@ -1,4 +1,20 @@
+// Polyfill ErrorUtils if not yet available in current runtime
+if (typeof global !== 'undefined' && !global.ErrorUtils) {
+  let _handler = (e, isFatal) => { if (__DEV__) console.error(e); };
+  global.ErrorUtils = {
+    setGlobalHandler(fn) { _handler = fn; },
+    getGlobalHandler() { return _handler; },
+    reportError(e) { _handler && _handler(e, false); },
+    reportFatalError(e) { _handler && _handler(e, true); },
+    applyWithGuard(fn, ctx, args) { try { return fn.apply(ctx, args); } catch (err) { this.reportError(err); } },
+    applyWithGuardIfNeeded(fn, ctx, args) { return fn.apply(ctx, args); },
+    inGuard() { return false; },
+    guard(fn, name, ctx) { return (...args) => this.applyWithGuard(fn, ctx || this, args); },
+  };
+}
+
 import React, { useState, useEffect, useRef } from 'react';
+
 import {
   StyleSheet,
   View,

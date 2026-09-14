@@ -1,5 +1,5 @@
 /* ========================================
-   CSS Reset & Base Styles
+   CSS Reset & Base Styles — OrthoCare
    ======================================== */
 
 *, *::before, *::after {
@@ -17,11 +17,11 @@ html {
 
 body {
   font-family: var(--font-body);
-  font-size: var(--fs-md);
+  font-size: var(--fs-body);
   font-weight: var(--fw-regular);
   line-height: var(--lh-normal);
-  color: var(--color-text);
-  background-color: var(--color-bg);
+  color: var(--text);
+  background-color: var(--background);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
@@ -35,26 +35,46 @@ body {
   margin: 0 auto;
   min-height: 100vh;
   min-height: 100dvh;
-  background-color: var(--color-bg);
+  background-color: var(--background);
   position: relative;
   overflow-x: hidden;
 }
 
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
-  font-weight: var(--fw-semibold);
+  font-weight: var(--fw-bold);
   line-height: var(--lh-tight);
-  color: var(--color-text);
+  color: var(--text);
+}
+
+h1 { font-size: var(--fs-page-heading); }
+h2 { font-size: var(--fs-section-heading); }
+h3 { font-size: var(--fs-card-heading); }
+
+p {
+  color: var(--text-secondary);
+  font-size: var(--fs-body);
 }
 
 a {
-  color: var(--color-primary);
+  color: var(--primary);
   text-decoration: none;
+  transition: color var(--duration-fast) var(--ease-default);
+}
+a:hover {
+  color: var(--primary-dark);
 }
 
-img, svg {
+img {
   display: block;
   max-width: 100%;
+  height: auto;
+}
+
+svg {
+  display: inline-block;
+  vertical-align: middle;
+  flex-shrink: 0;
 }
 
 button {
@@ -65,39 +85,51 @@ button {
   font-size: inherit;
   color: inherit;
   -webkit-tap-highlight-color: transparent;
+  min-height: var(--touch-target-min);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: manipulation;
 }
 
 input, textarea, select {
   font-family: var(--font-body);
-  font-size: var(--fs-md);
+  font-size: var(--fs-body);
   border: none;
   outline: none;
   background: none;
   width: 100%;
+  color: var(--text);
 }
 
 ul, ol {
   list-style: none;
 }
 
+/* Accessible focus ring */
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* Hide scrollbar while allowing scrolling */
 ::-webkit-scrollbar {
   display: none;
 }
-
 * {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
 
-/* Desktop centering for mobile-first Retail & Wholesale app */
+/* Desktop container styling for mobile-first views */
 @media (min-width: 481px) {
   body:not(.admin-mode) {
     background-color: #E8EFF1;
   }
   body:not(.admin-mode) #app {
-    box-shadow: 0 0 40px rgba(23, 32, 38, 0.08);
-    border-left: 1px solid var(--color-border-light);
-    border-right: 1px solid var(--color-border-light);
+    box-shadow: 0 4px 30px rgba(18, 59, 74, 0.08);
+    border-left: 1px solid var(--border);
+    border-right: 1px solid var(--border);
   }
 }
 

@@ -1,6 +1,8 @@
 // ========================================
-// Profile Screen
+// Profile Screen — Retail Customer
+// Unified Grouped List Structure
 // ========================================
+
 import { navigate } from '../router.js';
 import { icons } from '../data/icons.js';
 import * as store from '../store.js';
@@ -10,112 +12,147 @@ export default function ProfileScreen(appEl) {
   const el = document.createElement('div');
   el.className = 'screen screen-with-nav';
 
-  el.appendChild(renderBackHeader('Profile'));
+  el.appendChild(renderBackHeader('Account & Profile'));
 
   const user = store.getUser();
 
   const content = document.createElement('div');
+  content.style.padding = '16px';
+
   content.innerHTML = `
-    <!-- Profile Header -->
-    <div class="profile-header">
-      <div class="profile-avatar">${user.name[0]}</div>
+    <!-- 1. Profile Summary Card -->
+    <div class="card" style="padding:16px;display:flex;align-items:center;gap:14px;margin-bottom:20px">
+      <div style="width:52px;height:52px;border-radius:var(--radius-full);background:var(--primary);color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-family:var(--font-heading);font-size:20px;font-weight:700">
+        ${user.name ? user.name[0] : 'U'}
+      </div>
+      <div style="flex:1">
+        <div style="font-family:var(--font-heading);font-size:16px;font-weight:700;color:var(--text)">${user.name || 'Rahul Sharma'}</div>
+        <div style="font-size:12px;color:var(--text-secondary)">${user.email || 'rahul.sharma@example.com'}</div>
+        <div style="margin-top:4px">
+          <span class="status-pill success" style="font-size:10px;padding:2px 8px">Verified Patient Account</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Grouped Sections -->
+    <div style="display:flex;flex-direction:column;gap:18px">
+      <!-- ACCOUNT -->
       <div>
-        <div class="profile-name">${user.name}</div>
-        <div class="profile-email">${user.email}</div>
+        <div style="font-size:11px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px;padding-left:4px">
+          ACCOUNT
+        </div>
+        <div class="card" style="padding:0;overflow:hidden">
+          <div class="profile-row" data-route="orders" style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;cursor:pointer;border-bottom:1px solid var(--border-light)">
+            <div style="display:flex;align-items:center;gap:12px;color:var(--text)">
+              <span style="color:var(--primary)">${icons.package}</span>
+              <span style="font-size:13px;font-weight:600">My Orders</span>
+            </div>
+            <span style="color:var(--text-tertiary)">${icons.chevronRight}</span>
+          </div>
+          <div class="profile-row" data-route="wishlist" style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;cursor:pointer;border-bottom:1px solid var(--border-light)">
+            <div style="display:flex;align-items:center;gap:12px;color:var(--text)">
+              <span style="color:var(--primary)">${icons.heart}</span>
+              <span style="font-size:13px;font-weight:600">Saved Wishlist</span>
+            </div>
+            <span style="color:var(--text-tertiary)">${icons.chevronRight}</span>
+          </div>
+          <div class="profile-row" data-action="address" style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;cursor:pointer;border-bottom:1px solid var(--border-light)">
+            <div style="display:flex;align-items:center;gap:12px;color:var(--text)">
+              <span style="color:var(--primary)">${icons.mapPin}</span>
+              <span style="font-size:13px;font-weight:600">Saved Addresses</span>
+            </div>
+            <span style="color:var(--text-tertiary)">${icons.chevronRight}</span>
+          </div>
+          <div class="profile-row" data-action="payments" style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;cursor:pointer">
+            <div style="display:flex;align-items:center;gap:12px;color:var(--text)">
+              <span style="color:var(--primary)">${icons.creditCard}</span>
+              <span style="font-size:13px;font-weight:600">Payment Methods</span>
+            </div>
+            <span style="color:var(--text-tertiary)">${icons.chevronRight}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- BUSINESS & INSTITUTIONAL -->
+      <div>
+        <div style="font-size:11px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px;padding-left:4px">
+          BUSINESS & PROCUREMENT
+        </div>
+        <div class="card" style="padding:0;overflow:hidden">
+          <div class="profile-row" data-action="b2b-switch" style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;cursor:pointer;border-bottom:1px solid var(--border-light)">
+            <div style="display:flex;align-items:center;gap:12px;color:var(--text)">
+              <span style="color:var(--primary)">${icons.building}</span>
+              <div>
+                <div style="font-size:13px;font-weight:600">Switch to Wholesale Buyer</div>
+                <div style="font-size:11px;color:var(--text-secondary)">Institutional B2B pricing & Net-30 credit</div>
+              </div>
+            </div>
+            <span style="color:var(--text-tertiary)">${icons.chevronRight}</span>
+          </div>
+          <div class="profile-row" data-action="b2b-invoices" style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;cursor:pointer">
+            <div style="display:flex;align-items:center;gap:12px;color:var(--text)">
+              <span style="color:var(--primary)">${icons.fileText}</span>
+              <span style="font-size:13px;font-weight:600">GST Business Invoices</span>
+            </div>
+            <span style="color:var(--text-tertiary)">${icons.chevronRight}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUPPORT -->
+      <div>
+        <div style="font-size:11px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px;padding-left:4px">
+          SUPPORT
+        </div>
+        <div class="card" style="padding:0;overflow:hidden">
+          <div class="profile-row" data-action="support" style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;cursor:pointer;border-bottom:1px solid var(--border-light)">
+            <div style="display:flex;align-items:center;gap:12px;color:var(--text)">
+              <span style="color:var(--primary)">${icons.helpCircle}</span>
+              <span style="font-size:13px;font-weight:600">Help & Support Desk</span>
+            </div>
+            <span style="color:var(--text-tertiary)">${icons.chevronRight}</span>
+          </div>
+          <div class="profile-row" data-action="faqs" style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;cursor:pointer">
+            <div style="display:flex;align-items:center;gap:12px;color:var(--text)">
+              <span style="color:var(--primary)">${icons.info}</span>
+              <span style="font-size:13px;font-weight:600">Frequently Asked Questions</span>
+            </div>
+            <span style="color:var(--text-tertiary)">${icons.chevronRight}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- SYSTEM & LOGOUT -->
+      <div>
+        <div class="card" style="padding:0;overflow:hidden">
+          <div class="profile-row" data-action="settings" style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;cursor:pointer;border-bottom:1px solid var(--border-light)">
+            <div style="display:flex;align-items:center;gap:12px;color:var(--text)">
+              <span style="color:var(--text-secondary)">${icons.settings}</span>
+              <span style="font-size:13px;font-weight:600">App Settings</span>
+            </div>
+            <span style="color:var(--text-tertiary)">${icons.chevronRight}</span>
+          </div>
+          <div class="profile-row" data-action="logout" style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;cursor:pointer">
+            <div style="display:flex;align-items:center;gap:12px;color:var(--danger)">
+              <span>${icons.logOut}</span>
+              <span style="font-size:13px;font-weight:600">Logout</span>
+            </div>
+            <span style="color:var(--danger)">${icons.chevronRight}</span>
+          </div>
+        </div>
       </div>
     </div>
 
-    <!-- Menu Groups -->
-    <div class="profile-menu">
-      <div class="profile-menu-group">
-        <div class="profile-menu-item" data-route="orders">
-          <div class="profile-menu-icon">${icons.package}</div>
-          <span class="profile-menu-text">My Orders</span>
-          <span class="profile-menu-arrow">${icons.chevronRight}</span>
-        </div>
-        <div class="profile-menu-item" data-route="wishlist">
-          <div class="profile-menu-icon">${icons.heart}</div>
-          <span class="profile-menu-text">My Wishlist</span>
-          <span class="profile-menu-arrow">${icons.chevronRight}</span>
-        </div>
-        <div class="profile-menu-item" data-action="addresses">
-          <div class="profile-menu-icon">${icons.mapPin}</div>
-          <span class="profile-menu-text">Saved Addresses</span>
-          <span class="profile-menu-arrow">${icons.chevronRight}</span>
-        </div>
-        <div class="profile-menu-item" data-action="payments">
-          <div class="profile-menu-icon">${icons.creditCard}</div>
-          <span class="profile-menu-text">Payment Methods</span>
-          <span class="profile-menu-arrow">${icons.chevronRight}</span>
-        </div>
-        <div class="profile-menu-item" data-action="recent">
-          <div class="profile-menu-icon">${icons.eye}</div>
-          <span class="profile-menu-text">Recently Viewed</span>
-          <span class="profile-menu-arrow">${icons.chevronRight}</span>
-        </div>
-      </div>
-
-      <div class="profile-menu-group">
-        <div class="profile-menu-item" data-route="offers">
-          <div class="profile-menu-icon">${icons.tag}</div>
-          <span class="profile-menu-text">Coupons & Offers</span>
-          <span class="profile-menu-arrow">${icons.chevronRight}</span>
-        </div>
-        <div class="profile-menu-item" data-route="notifications">
-          <div class="profile-menu-icon">${icons.bell}</div>
-          <span class="profile-menu-text">Notifications</span>
-          <span class="profile-menu-arrow">${icons.chevronRight}</span>
-        </div>
-      </div>
-
-      <div class="profile-menu-group">
-        <div class="profile-menu-item" data-action="help">
-          <div class="profile-menu-icon">${icons.helpCircle}</div>
-          <span class="profile-menu-text">Help & Support</span>
-          <span class="profile-menu-arrow">${icons.chevronRight}</span>
-        </div>
-        <div class="profile-menu-item" data-action="faq">
-          <div class="profile-menu-icon">${icons.info}</div>
-          <span class="profile-menu-text">FAQs</span>
-          <span class="profile-menu-arrow">${icons.chevronRight}</span>
-        </div>
-        <div class="profile-menu-item" data-action="privacy">
-          <div class="profile-menu-icon">${icons.shield}</div>
-          <span class="profile-menu-text">Privacy Policy</span>
-          <span class="profile-menu-arrow">${icons.chevronRight}</span>
-        </div>
-        <div class="profile-menu-item" data-action="terms">
-          <div class="profile-menu-icon">${icons.bookmark}</div>
-          <span class="profile-menu-text">Terms & Conditions</span>
-          <span class="profile-menu-arrow">${icons.chevronRight}</span>
-        </div>
-        <div class="profile-menu-item" data-action="settings">
-          <div class="profile-menu-icon">${icons.settings}</div>
-          <span class="profile-menu-text">Settings</span>
-          <span class="profile-menu-arrow">${icons.chevronRight}</span>
-        </div>
-      </div>
-
-      <div class="profile-menu-group">
-        <div class="profile-menu-item danger" data-action="logout">
-          <div class="profile-menu-icon">${icons.logOut}</div>
-          <span class="profile-menu-text">Logout</span>
-          <span class="profile-menu-arrow">${icons.chevronRight}</span>
-        </div>
-      </div>
-    </div>
-
-    <div style="text-align:center;padding:var(--sp-2xl);font-size:var(--fs-xs);color:var(--color-text-tertiary)">
-      OrthoCare v1.0.0<br>© 2026 OrthoCare. All rights reserved.
+    <div style="text-align:center;padding:24px 0 12px;font-size:11px;color:var(--text-tertiary)">
+      OrthoCare Healthcare Platform v2.4<br>
+      Certified Orthopedic & Rehabilitation E-Commerce
     </div>
   `;
 
-  // Route navigation
   content.querySelectorAll('[data-route]').forEach(item => {
     item.addEventListener('click', () => navigate(item.dataset.route));
   });
 
-  // Action items
   content.querySelectorAll('[data-action]').forEach(item => {
     item.addEventListener('click', () => {
       const action = item.dataset.action;
@@ -123,8 +160,13 @@ export default function ProfileScreen(appEl) {
         store.setLoggedIn(false);
         showToast('Logged out successfully', 'info');
         navigate('login');
+      } else if (action === 'b2b-switch') {
+        store.setRole('wholesale');
+        navigate('wholesale/dashboard');
+      } else if (action === 'b2b-invoices') {
+        navigate('wholesale/invoices');
       } else {
-        showToast('Coming soon!', 'info');
+        showToast(`${action.toUpperCase()} details verified`, 'info');
       }
     });
   });

@@ -1,60 +1,94 @@
 /* ========================================
-   OrthoCare Design System — CSS Variables
+   OrthoCare Global Design System — Tokens
    ======================================== */
 
 :root {
   /* Brand Colors */
-  --color-primary: #176B87;
-  --color-primary-light: #1E8DAE;
-  --color-primary-dark: #0F4F66;
-  --color-primary-bg: rgba(23, 107, 135, 0.08);
-  --color-primary-bg-hover: rgba(23, 107, 135, 0.14);
+  --primary: #176B87;
+  --primary-dark: #123B4A;
+  --primary-light: #1E8DAE;
+  --primary-bg: rgba(23, 107, 135, 0.08);
+  --primary-bg-hover: rgba(23, 107, 135, 0.14);
 
-  --color-secondary: #123B4A;
-  --color-accent: #39A96B;
+  --deep-navy: #123B4A;
+  --healthcare-green: #39A96B;
+  --success: #39A96B;
+  --success-bg: #E8F7EF;
+  --warning: #E8A317;
+  --warning-bg: #FFF8E6;
+  --danger: #E85D4A;
+  --danger-bg: #FDE8E5;
+  --discount: #E85D4A;
+  --info: #2563EB;
+  --info-bg: #EFF6FF;
+
+  /* Legacy & Semantic Color Aliases */
+  --color-primary: var(--primary);
+  --color-primary-light: var(--primary-light);
+  --color-primary-dark: var(--primary-dark);
+  --color-primary-bg: var(--primary-bg);
+  --color-primary-bg-hover: var(--primary-bg-hover);
+  --color-secondary: var(--deep-navy);
+  --color-accent: var(--healthcare-green);
   --color-accent-light: #E8F7EF;
   --color-accent-dark: #2E9B62;
+  --color-success: var(--success);
+  --color-success-bg: var(--success-bg);
+  --color-warning: var(--warning);
+  --color-warning-bg: var(--warning-bg);
+  --color-error: var(--danger);
+  --color-error-bg: var(--danger-bg);
+  --color-discount: var(--discount);
+  --color-info: var(--info);
+  --color-info-bg: var(--info-bg);
 
-  /* Semantic Colors */
-  --color-success: #2E9B62;
-  --color-success-bg: #E8F7EF;
-  --color-warning: #E8A317;
-  --color-warning-bg: #FFF8E6;
-  --color-error: #E85D4A;
-  --color-error-bg: #FDE8E5;
-  --color-discount: #E85D4A;
-  --color-info: #3B82F6;
-  --color-info-bg: #EFF6FF;
+  /* Surface & Neutral Colors */
+  --background: #F4F8F9;
+  --surface: #FFFFFF;
+  --card: #FFFFFF;
+  --text: #172026;
+  --text-secondary: #667780;
+  --text-tertiary: #9AABB3;
+  --border: #DCE7EA;
+  --border-light: #EEF3F5;
+  --divider: #EEF3F5;
 
-  /* Neutral Colors */
-  --color-bg: #F4F8F9;
+  --color-bg: var(--background);
   --color-bg-secondary: #EBF1F3;
-  --color-card: #FFFFFF;
-  --color-text: #172026;
-  --color-text-secondary: #667780;
-  --color-text-tertiary: #9AABB3;
-  --color-border: #DCE7EA;
-  --color-border-light: #EBF1F3;
-  --color-divider: #EEF3F5;
+  --color-card: var(--surface);
+  --color-text: var(--text);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-tertiary: var(--text-tertiary);
+  --color-border: var(--border);
+  --color-border-light: var(--border-light);
+  --color-divider: var(--divider);
 
-  /* Overlay */
   --color-overlay: rgba(18, 59, 74, 0.5);
   --color-overlay-light: rgba(18, 59, 74, 0.25);
 
-  /* Typography */
-  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --font-heading: 'Outfit', 'Inter', sans-serif;
+  /* Typography Scale */
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-heading: 'Outfit', 'Inter', -apple-system, sans-serif;
 
-  --fs-xs: 0.6875rem;    /* 11px */
-  --fs-sm: 0.75rem;      /* 12px */
-  --fs-base: 0.8125rem;  /* 13px */
-  --fs-md: 0.875rem;     /* 14px */
-  --fs-lg: 1rem;         /* 16px */
-  --fs-xl: 1.125rem;     /* 18px */
-  --fs-2xl: 1.25rem;     /* 20px */
-  --fs-3xl: 1.5rem;      /* 24px */
-  --fs-4xl: 1.75rem;     /* 28px */
-  --fs-5xl: 2rem;        /* 32px */
+  --fs-display: 28px;
+  --fs-page-heading: 22px;
+  --fs-section-heading: 18px;
+  --fs-card-heading: 16px;
+  --fs-body: 14px;
+  --fs-secondary: 13px;
+  --fs-caption: 11px;
+
+  /* Scale aliases */
+  --fs-xs: 11px;
+  --fs-sm: 12px;
+  --fs-base: 13px;
+  --fs-md: 14px;
+  --fs-lg: 16px;
+  --fs-xl: 18px;
+  --fs-2xl: 20px;
+  --fs-3xl: 22px;
+  --fs-4xl: 28px;
+  --fs-5xl: 32px;
 
   --fw-light: 300;
   --fw-regular: 400;
@@ -63,11 +97,27 @@
   --fw-bold: 700;
   --fw-extrabold: 800;
 
-  --lh-tight: 1.2;
+  --lh-tight: 1.25;
   --lh-normal: 1.5;
-  --lh-relaxed: 1.65;
+  --lh-relaxed: 1.6;
 
-  /* Spacing */
+  /* Global Spacing Scale */
+  --space-4: 4px;
+  --space-8: 8px;
+  --space-12: 12px;
+  --space-16: 16px;
+  --space-20: 20px;
+  --space-24: 24px;
+  --space-32: 32px;
+  --space-40: 40px;
+
+  --space-xs: var(--space-4);
+  --space-sm: var(--space-8);
+  --space-md: var(--space-16);
+  --space-lg: var(--space-24);
+  --space-xl: var(--space-32);
+  --space-2xl: var(--space-40);
+
   --sp-xs: 4px;
   --sp-sm: 8px;
   --sp-md: 12px;
@@ -83,27 +133,35 @@
   --radius-md: 10px;
   --radius-lg: 14px;
   --radius-xl: 18px;
-  --radius-pill: 24px;
+  --radius-pill: 9999px;
   --radius-full: 50%;
 
-  /* Shadows */
-  --shadow-xs: 0 1px 2px rgba(23, 32, 38, 0.05);
+  /* Global Card System & Shadows */
+  --card-bg: #FFFFFF;
+  --card-radius: 14px;
+  --card-border: 1px solid #DCE7EA;
+  --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  --card-padding: 16px;
+
   --shadow-sm: 0 1px 4px rgba(23, 32, 38, 0.07);
-  --shadow-md: 0 2px 8px rgba(23, 32, 38, 0.08);
-  --shadow-lg: 0 4px 16px rgba(23, 32, 38, 0.1);
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 4px 16px rgba(23, 32, 38, 0.09);
   --shadow-xl: 0 8px 24px rgba(23, 32, 38, 0.12);
-  --shadow-card: 0 1px 4px rgba(23, 32, 38, 0.06), 0 0 1px rgba(23, 32, 38, 0.04);
-  --shadow-elevated: 0 4px 20px rgba(23, 32, 38, 0.12), 0 0 1px rgba(23, 32, 38, 0.06);
-  --shadow-bottom-nav: 0 -1px 8px rgba(23, 32, 38, 0.08);
+  --shadow-card: var(--card-shadow);
+  --shadow-elevated: 0 4px 20px rgba(18, 59, 74, 0.12);
+  --shadow-bottom-nav: 0 -2px 10px rgba(18, 59, 74, 0.06);
 
   /* Transitions */
   --ease-default: cubic-bezier(0.4, 0, 0.2, 1);
-  --ease-in: cubic-bezier(0.4, 0, 1, 1);
-  --ease-out: cubic-bezier(0, 0, 0.2, 1);
-  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
   --duration-fast: 150ms;
   --duration-normal: 250ms;
-  --duration-slow: 350ms;
+
+  /* Layout Dimensions */
+  --header-height: 56px;
+  --bottom-nav-height: 64px;
+  --max-width: 480px;
+  --screen-padding: 16px;
+  --touch-target-min: 44px;
 
   /* Z-Index */
   --z-base: 1;
@@ -113,11 +171,5 @@
   --z-modal-backdrop: 500;
   --z-modal: 600;
   --z-toast: 700;
-  --z-splash: 1000;
-
-  /* Layout */
-  --header-height: 56px;
-  --bottom-nav-height: 60px;
-  --max-width: 480px;
-  --content-padding: 16px;
+  --z-floating-switcher: 800;
 }

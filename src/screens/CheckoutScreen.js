@@ -1,48 +1,79 @@
 // ========================================
-// Checkout Screen — 4-Step Wizard
+// Checkout Screen — Retail Customer
+// Focused 4-Step Flow: Address -> Order Summary -> Payment -> Confirmation
 // ========================================
+
 import { navigate } from '../router.js';
 import { getProductById, formatPrice } from '../data/products.js';
 import { addresses, paymentMethods } from '../data/banners.js';
 import { icons } from '../data/icons.js';
 import * as store from '../store.js';
-import { renderBackHeader, showToast } from '../components/index.js';
+import { renderBackHeader } from '../components/index.js';
 
 export default function CheckoutScreen(appEl) {
   const cart = store.getCart();
   if (cart.length === 0) { navigate('cart'); return { unmount() {} }; }
 
-  let step = 1;
+  let step = 1; // 1: Address, 2: Summary, 3: Payment, 4: Confirm
+  let selectedPayment = 'upi';
+
   const el = document.createElement('div');
   el.className = 'screen';
+  el.style.paddingBottom = '96px';
 
   el.appendChild(renderBackHeader('Checkout'));
 
-  const stepsBar = document.createElement('div');
+  const stepsContainer = document.createElement('div');
+  stepsContainer.style.background = '#FFFFFF';
+  stepsContainer.style.borderBottom = '1px solid var(--border)';
+  stepsContainer.style.padding = '12px 16px';
+
   const contentArea = document.createElement('div');
-  el.appendChild(stepsBar);
+  contentArea.style.padding = '16px';
+
+  el.appendChild(stepsContainer);
   el.appendChild(contentArea);
   appEl.appendChild(el);
 
-  // Sticky CTA
-  const sticky = document.createElement('div');
-  sticky.className = 'sticky-bottom';
-  appEl.appendChild(sticky);
+  // Sticky Bottom Next/Confirm Bar
+  const stickyBar = document.createElement('div');
+  stickyBar.style.position = 'fixed';
+  stickyBar.style.bottom = '0';
+  stickyBar.style.left = '50%';
+  stickyBar.style.transform = 'translateX(-50%)';
+  stickyBar.style.width = '100%';
+  stickyBar.style.maxWidth = 'var(--max-width)';
+  stickyBar.style.background = '#FFFFFF';
+  stickyBar.style.borderTop = '1px solid var(--border)';
+  stickyBar.style.boxShadow = 'var(--shadow-lg)';
+  stickyBar.style.padding = '12px 16px';
+  stickyBar.style.zIndex = 'var(--z-bottom-nav)';
+  appEl.appendChild(stickyBar);
 
-  function renderSteps() {
-    const labels = ['Address', 'Summary', 'Payment', 'Confirm'];
-    stepsBar.className = 'steps';
-    stepsBar.innerHTML = labels.map((l, i) => `
-      <div class="step ${i + 1 < step ? 'completed' : ''} ${i + 1 === step ? 'active' : ''}">
-        <span class="step-number">${i + 1 < step ? '✓' : i + 1}</span>
-        <span style="font-size:var(--fs-xs)">${l}</span>
+  function renderStepper() {
+    const steps = ['Address', 'Summary', 'Payment', 'Confirm'];
+    stepsContainer.innerHTML = `
+      <div style="display:flex;align-items:center;justify-content:space-between;max-width:360px;margin:0 auto">
+        ${steps.map((s, idx) => {
+          const num = idx + 1;
+          const isDone = num < step;
+          const isCurrent = num === step;
+          return `
+            <div style="display:flex;align-items:center;gap:6px">
+              <div style="width:24px;height:24px;border-radius:50%;background:${isCurrent ? 'var(--primary)' : (isDone ? 'var(--success)' : 'var(--background)')};color:${isCurrent || isDone ? '#fff' : 'var(--text-secondary)'};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700">
+                ${isDone ? icons.check : num}
+              </div>
+              <span style="font-size:11px;font-weight:${isCurrent ? '700' : '500'};color:${isCurrent ? 'var(--text)' : 'var(--text-secondary)'}">${s}</span>
+            </div>
+            ${idx < steps.length - 1 ? `<div style="flex:1;height:2px;background:${isDone ? 'var(--success)' : 'var(--border)'};margin:0 6px"></div>` : ''}
+          `;
+        }).join('')}
       </div>
-      ${i < labels.length - 1 ? `<div class="step-connector ${i + 1 < step ? 'completed' : ''} ${i + 1 === step ? 'active' : ''}"></div>` : ''}
-    `).join('');
+    `;
   }
 
-  function renderStep() {
-    renderSteps();
+  function renderCurrentStep() {
+    renderStepper();
     contentArea.innerHTML = '';
 
     if (step === 1) renderAddressStep();
@@ -51,157 +82,172 @@ export default function CheckoutScreen(appEl) {
     else if (step === 4) renderConfirmStep();
   }
 
+  // 1. Address Step
   function renderAddressStep() {
-    const sec = document.createElement('div');
-    sec.className = 'checkout-section';
-    sec.innerHTML = `
-      <h3 class="pd-section-title" style="margin-bottom:var(--sp-lg)">Select Delivery Address</h3>
-      ${addresses.map(a => `
-        <div class="address-card ${store.getSelectedAddress() === a.id ? 'selected' : ''}" data-aid="${a.id}">
-          <div class="address-card-type">${a.type}</div>
-          <div class="address-card-name">${a.name}</div>
-          <div class="address-card-details">${a.line1}, ${a.line2}<br>${a.city}, ${a.state} — ${a.pin}<br>Phone: ${a.phone}</div>
-        </div>
-      `).join('')}
-      <button class="btn btn-secondary btn-block" style="margin-top:var(--sp-sm)">+ Add New Address</button>
+    contentArea.innerHTML = `
+      <h2 style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:12px">Select Delivery Address</h2>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        ${addresses.map(a => `
+          <div class="card address-card" data-id="${a.id}" style="padding:14px;cursor:pointer;border:1.5px solid ${store.getSelectedAddress() === a.id ? 'var(--primary)' : 'var(--border)'};background:${store.getSelectedAddress() === a.id ? 'var(--primary-bg)' : '#FFFFFF'}">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+              <span style="font-size:11px;font-weight:700;color:var(--primary);text-transform:uppercase">${a.type}</span>
+              ${store.getSelectedAddress() === a.id ? `<span style="color:var(--primary)">${icons.check}</span>` : ''}
+            </div>
+            <div style="font-weight:700;font-size:14px;color:var(--text)">${a.name}</div>
+            <div style="font-size:12px;color:var(--text-secondary);margin-top:2px;line-height:1.4">
+              ${a.line1}, ${a.line2}<br>${a.city}, ${a.state} - ${a.pin}<br>Phone: ${a.phone}
+            </div>
+          </div>
+        `).join('')}
+      </div>
     `;
-    sec.querySelectorAll('.address-card').forEach(card => {
+
+    contentArea.querySelectorAll('.address-card').forEach(card => {
       card.addEventListener('click', () => {
-        store.setSelectedAddress(parseInt(card.dataset.aid));
-        sec.querySelectorAll('.address-card').forEach(c => c.classList.remove('selected'));
-        card.classList.add('selected');
+        store.setSelectedAddress(Number(card.dataset.id));
+        renderAddressStep();
       });
     });
-    contentArea.appendChild(sec);
 
-    sticky.innerHTML = `<button class="btn btn-primary btn-block btn-lg" id="next-step">Continue</button>`;
-    sticky.querySelector('#next-step').addEventListener('click', () => { step = 2; renderStep(); });
+    stickyBar.innerHTML = `
+      <button class="btn btn-primary btn-block" id="btn-next-address">
+        Deliver to this Address
+      </button>
+    `;
+    stickyBar.querySelector('#btn-next-address')?.addEventListener('click', () => {
+      step = 2;
+      renderCurrentStep();
+    });
   }
 
+  // 2. Order Summary Step
   function renderSummaryStep() {
-    let total = 0;
-    const sec = document.createElement('div');
-    sec.className = 'checkout-section';
-    sec.innerHTML = `
-      <h3 class="pd-section-title" style="margin-bottom:var(--sp-lg)">Order Summary</h3>
-      ${cart.map(item => {
-        const p = getProductById(item.productId);
-        if (!p) return '';
-        total += p.price * item.qty;
-        return `
-          <div style="display:flex;gap:var(--sp-md);margin-bottom:var(--sp-lg);padding-bottom:var(--sp-lg);border-bottom:1px solid var(--color-divider)">
-            <div style="width:60px;height:60px;background:var(--color-bg);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;flex-shrink:0">
-              <span style="font-size:28px;opacity:0.3">${p.emoji || '🩹'}</span>
+    let subtotal = 0;
+    contentArea.innerHTML = `
+      <h2 style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:12px">Order Summary</h2>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px">
+        ${cart.map(item => {
+          const p = getProductById(item.productId);
+          if (!p) return '';
+          const lineTotal = p.price * item.qty;
+          subtotal += lineTotal;
+          return `
+            <div class="card" style="padding:12px;display:flex;align-items:center;gap:12px">
+              <div style="width:48px;height:48px;border-radius:var(--radius-sm);background:var(--primary-bg);display:flex;align-items:center;justify-content:center;color:var(--primary);flex-shrink:0">
+                ${p.images && p.images.length > 0 ? `<img src="${p.images[0]}" alt="${p.name}" style="max-height:100%;object-fit:contain" />` : icons.package}
+              </div>
+              <div style="flex:1">
+                <div style="font-size:13px;font-weight:700;color:var(--text)">${p.name}</div>
+                <div style="font-size:11px;color:var(--text-secondary)">Size: ${item.size} • Qty: <strong>${item.qty}</strong></div>
+              </div>
+              <div style="font-size:13px;font-weight:700;color:var(--text)">${formatPrice(lineTotal)}</div>
             </div>
-            <div style="flex:1">
-              <div style="font-weight:var(--fw-medium);margin-bottom:2px">${p.name}</div>
-              <div style="font-size:var(--fs-sm);color:var(--color-text-secondary)">Size: ${item.size} · Qty: ${item.qty}</div>
-              <div style="font-weight:var(--fw-bold);margin-top:4px">${formatPrice(p.price * item.qty)}</div>
-            </div>
-          </div>
-        `;
-      }).join('')}
-      <div class="price-row price-row-total" style="border-top:1px solid var(--color-divider);padding-top:var(--sp-lg)">
-        <span class="price-row-label">Total</span>
-        <span class="price-row-value">${formatPrice(total)}</span>
+          `;
+        }).join('')}
+      </div>
+
+      <div class="card" style="padding:14px">
+        <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px">
+          <span style="color:var(--text-secondary)">Subtotal</span>
+          <strong style="color:var(--text)">${formatPrice(subtotal)}</strong>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px">
+          <span style="color:var(--text-secondary)">Express Medical Delivery</span>
+          <span style="color:var(--success);font-weight:700">FREE</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:15px;font-weight:700;border-top:1px solid var(--border-light);padding-top:8px;margin-top:6px">
+          <span style="color:var(--text)">Order Total</span>
+          <span style="color:var(--primary)">${formatPrice(subtotal)}</span>
+        </div>
       </div>
     `;
-    contentArea.appendChild(sec);
 
-    sticky.innerHTML = `
-      <button class="btn btn-secondary btn-block" id="prev-step">Back</button>
-      <button class="btn btn-primary btn-block btn-lg" id="next-step">Continue</button>
+    stickyBar.innerHTML = `
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <button class="btn btn-secondary btn-block" id="btn-back-1">Back</button>
+        <button class="btn btn-primary btn-block" id="btn-next-summary">Proceed to Pay</button>
+      </div>
     `;
-    sticky.querySelector('#prev-step').addEventListener('click', () => { step = 1; renderStep(); });
-    sticky.querySelector('#next-step').addEventListener('click', () => { step = 3; renderStep(); });
+    stickyBar.querySelector('#btn-back-1')?.addEventListener('click', () => { step = 1; renderCurrentStep(); });
+    stickyBar.querySelector('#btn-next-summary')?.addEventListener('click', () => { step = 3; renderCurrentStep(); });
   }
 
+  // 3. Payment Step
   function renderPaymentStep() {
-    const sec = document.createElement('div');
-    sec.className = 'checkout-section';
-    sec.innerHTML = `
-      <h3 class="pd-section-title" style="margin-bottom:var(--sp-lg)">Payment Method</h3>
-      ${paymentMethods.map(m => `
-        <div class="payment-option ${store.getSelectedPayment() === m.id ? 'selected' : ''}" data-pid="${m.id}">
-          <div class="payment-radio"></div>
-          <div class="payment-icon">${m.icon}</div>
-          <div>
-            <div class="payment-label">${m.label}</div>
-            <div class="payment-desc">${m.desc}</div>
+    contentArea.innerHTML = `
+      <h2 style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:12px">Select Payment Method</h2>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        ${paymentMethods.map(pm => `
+          <div class="card payment-method-card" data-id="${pm.id}" style="padding:14px;cursor:pointer;border:1.5px solid ${selectedPayment === pm.id ? 'var(--primary)' : 'var(--border)'};background:${selectedPayment === pm.id ? 'var(--primary-bg)' : '#FFFFFF'};display:flex;align-items:center;gap:12px">
+            <div style="color:var(--primary)">${icons[pm.iconKey] || icons.creditCard}</div>
+            <div style="flex:1">
+              <div style="font-size:13px;font-weight:700;color:var(--text)">${pm.label}</div>
+              <div style="font-size:11px;color:var(--text-secondary)">${pm.desc}</div>
+            </div>
+            ${selectedPayment === pm.id ? `<span style="color:var(--primary)">${icons.check}</span>` : ''}
           </div>
-        </div>
-      `).join('')}
+        `).join('')}
+      </div>
     `;
-    sec.querySelectorAll('.payment-option').forEach(opt => {
-      opt.addEventListener('click', () => {
-        store.setSelectedPayment(opt.dataset.pid);
-        sec.querySelectorAll('.payment-option').forEach(o => o.classList.remove('selected'));
-        opt.classList.add('selected');
+
+    contentArea.querySelectorAll('.payment-method-card').forEach(card => {
+      card.addEventListener('click', () => {
+        selectedPayment = card.dataset.id;
+        renderPaymentStep();
       });
     });
-    contentArea.appendChild(sec);
 
-    sticky.innerHTML = `
-      <button class="btn btn-secondary btn-block" id="prev-step">Back</button>
-      <button class="btn btn-primary btn-block btn-lg" id="next-step">Continue</button>
+    stickyBar.innerHTML = `
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <button class="btn btn-secondary btn-block" id="btn-back-2">Back</button>
+        <button class="btn btn-primary btn-block" id="btn-next-payment">Review & Confirm</button>
+      </div>
     `;
-    sticky.querySelector('#prev-step').addEventListener('click', () => { step = 2; renderStep(); });
-    sticky.querySelector('#next-step').addEventListener('click', () => { step = 4; renderStep(); });
+    stickyBar.querySelector('#btn-back-2')?.addEventListener('click', () => { step = 2; renderCurrentStep(); });
+    stickyBar.querySelector('#btn-next-payment')?.addEventListener('click', () => { step = 4; renderCurrentStep(); });
   }
 
+  // 4. Confirmation Step
   function renderConfirmStep() {
-    let total = 0;
-    cart.forEach(item => {
-      const p = getProductById(item.productId);
-      if (p) total += p.price * item.qty;
+    let subtotal = 0;
+    cart.forEach(it => {
+      const p = getProductById(it.productId);
+      if (p) subtotal += p.price * it.qty;
     });
-    const delivery = total >= 999 ? 0 : 49;
-    const addr = addresses.find(a => a.id === store.getSelectedAddress()) || addresses[0];
-    const payment = paymentMethods.find(m => m.id === store.getSelectedPayment()) || paymentMethods[0];
 
-    const sec = document.createElement('div');
-    sec.className = 'checkout-section';
-    sec.innerHTML = `
-      <h3 class="pd-section-title" style="margin-bottom:var(--sp-lg)">Confirm Order</h3>
-      <div style="padding:var(--sp-lg);background:var(--color-bg);border-radius:var(--radius-md);margin-bottom:var(--sp-lg)">
-        <div style="font-weight:var(--fw-semibold);margin-bottom:var(--sp-sm)">Delivering to</div>
-        <div style="font-size:var(--fs-sm);color:var(--color-text-secondary)">${addr.name}, ${addr.line1}, ${addr.city} — ${addr.pin}</div>
+    contentArea.innerHTML = `
+      <h2 style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:12px">Final Confirmation</h2>
+      <div class="card" style="padding:16px;margin-bottom:14px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;color:var(--primary)">
+          ${icons.shield}
+          <span style="font-size:13px;font-weight:700">Verified Clinical Order</span>
+        </div>
+        <div style="font-size:12px;color:var(--text-secondary);line-height:1.5">
+          By clicking Place Order, you confirm your order for <strong>${cart.length} item(s)</strong> with total value of <strong style="color:var(--text)">${formatPrice(subtotal)}</strong>.
+          Payment Method: <strong>${paymentMethods.find(x => x.id === selectedPayment)?.label || 'UPI'}</strong>.
+        </div>
       </div>
-      <div style="padding:var(--sp-lg);background:var(--color-bg);border-radius:var(--radius-md);margin-bottom:var(--sp-lg)">
-        <div style="font-weight:var(--fw-semibold);margin-bottom:var(--sp-sm)">Payment</div>
-        <div style="font-size:var(--fs-sm);color:var(--color-text-secondary)">${payment.icon} ${payment.label}</div>
-      </div>
-      <div class="price-row"><span class="price-row-label">Items (${cart.reduce((s, c) => s + c.qty, 0)})</span><span class="price-row-value">${formatPrice(total)}</span></div>
-      <div class="price-row"><span class="price-row-label">Delivery</span><span class="price-row-value ${delivery === 0 ? 'price-row-discount' : ''}">${delivery === 0 ? 'FREE' : formatPrice(delivery)}</span></div>
-      <div class="price-row price-row-total"><span class="price-row-label">Total</span><span class="price-row-value">${formatPrice(total + delivery)}</span></div>
     `;
-    contentArea.appendChild(sec);
 
-    sticky.innerHTML = `
-      <button class="btn btn-secondary btn-block" id="prev-step">Back</button>
-      <button class="btn btn-primary btn-block btn-lg" id="place-order">Place Order</button>
+    stickyBar.innerHTML = `
+      <div style="display:grid;grid-template-columns:1fr 1.5fr;gap:10px">
+        <button class="btn btn-secondary btn-block" id="btn-back-3">Back</button>
+        <button class="btn btn-primary btn-block" id="btn-place-order">Place Order (${formatPrice(subtotal)})</button>
+      </div>
     `;
-    sticky.querySelector('#prev-step').addEventListener('click', () => { step = 3; renderStep(); });
-    sticky.querySelector('#place-order').addEventListener('click', () => {
-      // Create order
-      const orderId = 'OR' + Math.floor(10000 + Math.random() * 90000);
-      const order = {
-        id: orderId,
-        date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }),
-        status: 'confirmed',
-        items: cart.map(c => ({ ...c, price: getProductById(c.productId)?.price || 0 })),
-        total: total + delivery,
-        address: addr.type,
-      };
-      // Save order and clear cart
-      const orders = store.getOrders();
-      orders.unshift(order);
-      store.clearCart();
-      navigate(`success/${orderId}`);
+    stickyBar.querySelector('#btn-back-3')?.addEventListener('click', () => { step = 3; renderCurrentStep(); });
+    stickyBar.querySelector('#btn-place-order')?.addEventListener('click', () => {
+      const order = store.placeOrder(selectedPayment);
+      store.emitter.emit('toast', { message: 'Order placed successfully!', type: 'success' });
+      navigate('order-success/' + order.id);
     });
   }
 
-  renderStep();
+  renderCurrentStep();
 
-  return { unmount() {} };
+  return {
+    unmount() {
+      stickyBar.remove();
+    }
+  };
 }

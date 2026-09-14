@@ -29,31 +29,32 @@ export default function LoginScreen(appEl) {
 
       <div class="login-form">
         <div class="input-group">
-          <span class="input-icon">📱</span>
-          <input type="tel" id="login-phone" placeholder="Enter mobile number" maxlength="10" />
+          <span class="input-icon" style="color:var(--text-secondary); width:18px; height:18px; display:inline-flex">${icons.phone || icons.user}</span>
+          <input type="tel" id="login-phone" placeholder="Enter 10-digit mobile number" maxlength="10" />
         </div>
         <button class="btn btn-primary btn-block btn-lg" id="login-continue">Continue as Customer</button>
       </div>
 
       <!-- Prominent Business Buyer Section -->
-      <div style="background:#f0fdfa; border:2px solid #0d9488; border-radius:14px; padding:16px; margin:20px 0; text-align:center">
-        <div style="font-size:12px; font-weight:800; color:#0f766e; text-transform:uppercase; letter-spacing:0.5px">
-          🏥 Are you a Business Buyer?
+      <div style="background:rgba(23, 107, 135, 0.06); border:1.5px solid var(--primary); border-radius:var(--radius-lg); padding:16px; margin:20px 0; text-align:center">
+        <div style="font-size:12px; font-weight:700; color:var(--primary); text-transform:uppercase; letter-spacing:0.5px; display:flex; align-items:center; justify-content:center; gap:6px">
+          <span style="width:16px; height:16px; display:inline-flex">${icons.hospital || icons.building}</span>
+          Are you a Healthcare Institutional Buyer?
         </div>
-        <p style="font-size:12px; color:#134e4a; margin:6px 0 14px">
-          Hospitals, Clinics, Pharmacies & Distributors get wholesale pricing, bulk discounts, and 30-day credit.
+        <p style="font-size:12px; color:var(--text); margin:6px 0 14px; line-height:1.4">
+          Hospitals, Clinics, Pharmacies & Distributors receive wholesale tier pricing, bulk discounts, and 30-day approved credit.
         </p>
         <div style="display:flex; flex-direction:column; gap:8px">
-          <button type="button" class="btn btn-block btn-sm" id="btn-goto-wholesale-reg" style="background:#0d9488; color:#ffffff; font-weight:700; padding:10px">
-            Register as Wholesale Buyer →
+          <button type="button" class="btn btn-primary btn-block btn-sm" id="btn-goto-wholesale-reg" style="height:40px; font-weight:700">
+            Register Wholesale Partner Account
           </button>
           <div style="display:flex; justify-content:center; gap:16px; margin-top:4px">
-            <a href="#/wholesale/login" id="btn-goto-wholesale-login" style="font-size:12px; font-weight:700; color:#0f766e">
+            <a href="#/wholesale/login" id="btn-goto-wholesale-login" style="font-size:12px; font-weight:700; color:var(--primary)">
               Wholesale Partner Login
             </a>
-            <span style="color:#cbd5e1">•</span>
-            <a href="#/home" id="btn-shop-customer-fast" style="font-size:12px; font-weight:700; color:#64748b">
-              Shop as Customer
+            <span style="color:var(--border)">•</span>
+            <a href="#/home" id="btn-shop-customer-fast" style="font-size:12px; font-weight:700; color:var(--text-secondary)">
+              Continue as Guest
             </a>
           </div>
         </div>

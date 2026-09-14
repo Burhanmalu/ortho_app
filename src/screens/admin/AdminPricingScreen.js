@@ -1,5 +1,5 @@
 // ========================================
-// Admin Pricing & Wholesale Tiers Management
+// Admin Pricing & Wholesale Tiers Management - Redesigned
 // ========================================
 
 import { navigate } from '../../router.js';
@@ -13,36 +13,36 @@ export default function AdminPricingScreen(appEl) {
   content.innerHTML = `
     <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:20px; flex-wrap:wrap; gap:12px">
       <div>
-        <h1 style="font-size:24px; font-weight:800; color:#0f172a; margin:0 0 4px">Wholesale Tier & Margin Rules</h1>
-        <div style="font-size:13px; color:#64748b">Define institutional volume rebates, credit terms, and qualification criteria</div>
+        <h1 style="font-size:20px; font-weight:800; color:var(--deep-navy); margin:0 0 4px">Wholesale Tier & Margin Rules</h1>
+        <div style="font-size:12px; color:var(--text-secondary)">Define institutional volume rebates, credit terms, and qualification criteria</div>
       </div>
-      <button id="btn-save-tier-rules" class="admin-btn admin-btn-primary">
+      <button id="btn-save-tier-rules" class="btn btn-primary btn-sm">
         Save Policy Changes
       </button>
     </div>
 
     <!-- Tiers Grid -->
-    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:16px; margin-bottom:24px">
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:14px; margin-bottom:20px">
       ${wholesaleTiers.map(t => `
-        <div class="card" style="padding:18px; border-radius:14px; border-top:4px solid ${t.badgeColor}">
+        <div class="card" style="padding:16px; border-top:3px solid ${t.badgeColor || 'var(--primary)'}">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px">
-            <h3 style="font-size:16px; font-weight:800; color:#0f172a; margin:0">${t.tier} Tier</h3>
-            <span class="b2b-badge" style="background:${t.badgeColor}22; color:${t.badgeColor}">Active</span>
+            <h3 style="font-size:14px; font-weight:700; color:var(--deep-navy); margin:0">${t.tier} Tier</h3>
+            <span class="status-pill status-active" style="font-size:10px; padding:2px 8px">Active</span>
           </div>
-          <p style="font-size:12px; color:#64748b; margin-bottom:14px">${t.description}</p>
+          <p style="font-size:11px; color:var(--text-secondary); margin-bottom:12px; line-height:1.4">${t.description}</p>
 
           <div style="display:flex; flex-direction:column; gap:10px; font-size:12px">
             <div>
-              <label style="color:#64748b; font-weight:600; display:block; margin-bottom:2px">Extra Volume Rebate (%):</label>
-              <input type="number" value="${t.discountPercent}" class="input" style="width:100%; font-weight:700">
+              <label style="color:var(--text-secondary); font-size:11px; font-weight:600; display:block; margin-bottom:4px">Extra Volume Rebate (%):</label>
+              <input type="number" value="${t.discountPercent}" style="width:100%; padding:6px 10px; border:1px solid var(--border); border-radius:var(--radius-sm); font-weight:700; outline:none">
             </div>
             <div>
-              <label style="color:#64748b; font-weight:600; display:block; margin-bottom:2px">Min Order Units (MOQ):</label>
-              <input type="number" value="${t.minOrderQty}" class="input" style="width:100%; font-weight:700">
+              <label style="color:var(--text-secondary); font-size:11px; font-weight:600; display:block; margin-bottom:4px">Min Order Units (MOQ):</label>
+              <input type="number" value="${t.minOrderQty}" style="width:100%; padding:6px 10px; border:1px solid var(--border); border-radius:var(--radius-sm); font-weight:700; outline:none">
             </div>
             <div>
-              <label style="color:#64748b; font-weight:600; display:block; margin-bottom:2px">Approved Credit Terms:</label>
-              <input type="text" value="${t.creditDays === 0 ? 'Advance / COD' : `Net ${t.creditDays} Days`}" class="input" style="width:100%; font-weight:700">
+              <label style="color:var(--text-secondary); font-size:11px; font-weight:600; display:block; margin-bottom:4px">Approved Credit Terms:</label>
+              <input type="text" value="${t.creditDays === 0 ? 'Advance / COD' : `Net ${t.creditDays} Days`}" style="width:100%; padding:6px 10px; border:1px solid var(--border); border-radius:var(--radius-sm); font-weight:700; outline:none">
             </div>
           </div>
         </div>
@@ -50,29 +50,29 @@ export default function AdminPricingScreen(appEl) {
     </div>
 
     <!-- Default B2B Tax & Margin Policies -->
-    <div class="admin-card" style="padding:20px">
-      <h3 style="font-size:15px; font-weight:800; color:#0f3647; margin-bottom:14px">
-        Statutory Taxation & Freight Margin Settings
+    <div class="card" style="padding:18px">
+      <h3 style="font-size:14px; font-weight:700; color:var(--deep-navy); margin-bottom:14px; text-transform:uppercase; letter-spacing:0.5px">
+        Statutory Taxation & Freight Policies
       </h3>
-      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:16px; font-size:13px">
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:14px; font-size:12px">
         <div>
-          <label style="font-weight:700; display:block; margin-bottom:4px">Standard Orthopedic GST Rate</label>
-          <input type="text" value="18% (HSN 9021)" disabled class="input" style="width:100%; background:#f8fafc">
+          <label style="font-size:11px; font-weight:600; color:var(--text-secondary); display:block; margin-bottom:4px">Medical Device GST Rate</label>
+          <input type="text" value="18% (HSN 9021)" disabled style="width:100%; padding:8px 10px; border:1px solid var(--border); border-radius:var(--radius-sm); background:var(--bg-light); color:var(--text); font-weight:600">
         </div>
         <div>
-          <label style="font-weight:700; display:block; margin-bottom:4px">Free B2B Freight Threshold</label>
-          <input type="number" value="15000" class="input" style="width:100%">
+          <label style="font-size:11px; font-weight:600; color:var(--text-secondary); display:block; margin-bottom:4px">Free B2B Freight Threshold (₹)</label>
+          <input type="number" value="15000" style="width:100%; padding:8px 10px; border:1px solid var(--border); border-radius:var(--radius-sm); outline:none">
         </div>
         <div>
-          <label style="font-weight:700; display:block; margin-bottom:4px">Default Base Wholesale Discount</label>
-          <input type="number" value="25" class="input" style="width:100%">
+          <label style="font-size:11px; font-weight:600; color:var(--text-secondary); display:block; margin-bottom:4px">Default Base Margin (%)</label>
+          <input type="number" value="25" style="width:100%; padding:8px 10px; border:1px solid var(--border); border-radius:var(--radius-sm); outline:none">
         </div>
       </div>
     </div>
   `;
 
-  content.querySelector('#btn-save-tier-rules').addEventListener('click', () => {
-    store.emitter.emit('toast', { message: 'Wholesale pricing rules updated across all channels', type: 'success' });
+  content.querySelector('#btn-save-tier-rules')?.addEventListener('click', () => {
+    store.emit('toast', { message: 'Wholesale pricing rules updated across all channels', type: 'success' });
   });
 
   const fullLayout = renderAdminLayout('pricing', content);

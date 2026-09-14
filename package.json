@@ -12,6 +12,7 @@
     "vite": "^8.3.0"
   },
   "dependencies": {
+    "@react-native/js-polyfills": "^0.87.1",
     "expo": "^57.0.22",
     "react-native-webview": "13.16.1"
   }

@@ -1,4 +1,4 @@
-// ========================================
+﻿// ========================================
 // OrthoCare Product Catalog — 55+ Products
 // ========================================
 
@@ -9,7 +9,7 @@ export const products = [
   // ---- Knee Support (12) ----
   {
     id: pid(), name: 'Adjustable Knee Support Brace', category: 'knee',
-    brand: 'OrthoFlex', images: [], emoji: '🦵',
+    brand: 'OrthoFlex', images: [], iconKey: 'knee',
     mrp: 1299, price: 799, discount: 38, rating: 4.6, reviews: 1284,
     inStock: true, sizes: ['S','M','L','XL'],
     colors: ['Black', 'Blue'],
@@ -23,7 +23,7 @@ export const products = [
   },
   {
     id: pid(), name: 'Hinged Knee Stabilizer Pro', category: 'knee',
-    brand: 'MediSupport', images: [], emoji: '🦵',
+    brand: 'MediSupport', images: [], iconKey: 'knee',
     mrp: 2499, price: 1799, discount: 28, rating: 4.7, reviews: 856,
     inStock: true, sizes: ['M','L','XL','XXL'],
     colors: ['Black', 'Grey'],
@@ -37,7 +37,7 @@ export const products = [
   },
   {
     id: pid(), name: 'Compression Knee Sleeve', category: 'knee',
-    brand: 'FlexiCare', images: [], emoji: '🦵',
+    brand: 'FlexiCare', images: [], iconKey: 'knee',
     mrp: 699, price: 449, discount: 36, rating: 4.4, reviews: 2156,
     inStock: true, sizes: ['S','M','L','XL'],
     colors: ['Black', 'Blue', 'Grey'],
@@ -51,7 +51,7 @@ export const products = [
   },
   {
     id: pid(), name: 'Open Patella Knee Brace', category: 'knee',
-    brand: 'OrthoFlex', images: [], emoji: '🦵',
+    brand: 'OrthoFlex', images: [], iconKey: 'knee',
     mrp: 999, price: 649, discount: 35, rating: 4.5, reviews: 943,
     inStock: true, sizes: ['S','M','L','XL'],
     colors: ['Black'],
@@ -65,7 +65,7 @@ export const products = [
   },
   {
     id: pid(), name: 'Bamboo Charcoal Knee Support', category: 'knee',
-    brand: 'NaturaCare', images: [], emoji: '🦵',
+    brand: 'NaturaCare', images: [], iconKey: 'knee',
     mrp: 599, price: 399, discount: 33, rating: 4.3, reviews: 1567,
     inStock: true, sizes: ['M','L','XL'],
     colors: ['Grey', 'Black'],
@@ -79,7 +79,7 @@ export const products = [
   },
   {
     id: pid(), name: 'Sports Knee Pad with Gel Cushion', category: 'knee',
-    brand: 'ActivePro', images: [], emoji: '🦵',
+    brand: 'ActivePro', images: [], iconKey: 'knee',
     mrp: 899, price: 599, discount: 33, rating: 4.4, reviews: 723,
     inStock: true, sizes: ['S','M','L'],
     colors: ['Black', 'Red'],
@@ -93,7 +93,7 @@ export const products = [
   },
   {
     id: pid(), name: 'Magnetic Knee Wrap', category: 'knee',
-    brand: 'MediSupport', images: [], emoji: '🦵',
+    brand: 'MediSupport', images: [], iconKey: 'knee',
     mrp: 1499, price: 999, discount: 33, rating: 4.2, reviews: 456,
     inStock: true, sizes: ['Free Size'],
     colors: ['Black'],
@@ -107,7 +107,7 @@ export const products = [
   },
   {
     id: pid(), name: 'Kids Knee Support Band', category: 'knee',
-    brand: 'OrthoFlex', images: [], emoji: '🦵',
+    brand: 'OrthoFlex', images: [], iconKey: 'knee',
     mrp: 399, price: 299, discount: 25, rating: 4.5, reviews: 312,
     inStock: true, sizes: ['XS','S','M'],
     colors: ['Blue', 'Pink', 'Black'],
@@ -121,7 +121,7 @@ export const products = [
   },
   {
     id: pid(), name: 'Knee Immobilizer Full Leg', category: 'knee',
-    brand: 'MedRestore', images: [], emoji: '🦵',
+    brand: 'MedRestore', images: [], iconKey: 'knee',
     mrp: 2999, price: 2199, discount: 27, rating: 4.6, reviews: 287,
     inStock: true, sizes: ['S','M','L','XL'],
     colors: ['Blue'],
@@ -135,7 +135,7 @@ export const products = [
   },
   {
     id: pid(), name: 'Patella Tendon Strap', category: 'knee',
-    brand: 'FlexiCare', images: [], emoji: '🦵',
+    brand: 'FlexiCare', images: [], iconKey: 'knee',
     mrp: 499, price: 349, discount: 30, rating: 4.3, reviews: 1834,
     inStock: true, sizes: ['Free Size'],
     colors: ['Black', 'Blue'],
@@ -149,7 +149,7 @@ export const products = [
   },
   {
     id: pid(), name: 'Premium Knee Cap Pair', category: 'knee',
-    brand: 'NaturaCare', images: [], emoji: '🦵',
+    brand: 'NaturaCare', images: [], iconKey: 'knee',
     mrp: 799, price: 549, discount: 31, rating: 4.5, reviews: 3421,
     inStock: true, sizes: ['S','M','L','XL'],
     colors: ['Beige', 'Black'],
@@ -163,7 +163,7 @@ export const products = [
   },
   {
     id: pid(), name: 'Copper-Infused Knee Sleeve', category: 'knee',
-    brand: 'ActivePro', images: [], emoji: '🦵',
+    brand: 'ActivePro', images: [], iconKey: 'knee',
     mrp: 899, price: 599, discount: 33, rating: 4.4, reviews: 892,
     inStock: true, sizes: ['S','M','L','XL'],
     colors: ['Black'],
@@ -179,7 +179,7 @@ export const products = [
   // ---- Back & Waist Support (10) ----
   {
     id: pid(), name: 'Lumbar Back Support Belt', category: 'back',
-    brand: 'SpineGuard', images: [], emoji: '🔙',
+    brand: 'SpineGuard', images: [], iconKey: 'knee',
     mrp: 1999, price: 1299, discount: 35, rating: 4.5, reviews: 2341,
     inStock: true, sizes: ['S','M','L','XL','XXL'],
     colors: ['Black', 'Grey'],
@@ -193,7 +193,7 @@ export const products = [
   },
   {
     id: pid(), name: 'Elastic Abdominal Binder', category: 'back',
-    brand: 'MediSupport', images: [], emoji: '🔙',
+    brand: 'MediSupport', images: [], iconKey: 'knee',
     mrp: 999, price: 699, discount: 30, rating: 4.3, reviews: 1123,
     inStock: true, sizes: ['S','M','L','XL','XXL'],
     colors: ['White', 'Beige'],
@@ -207,7 +207,7 @@ export const products = [
   },
   {
     id: pid(), name: 'Heating Waist Belt', category: 'back',
-    brand: 'NaturaCare', images: [], emoji: '🔙',
+    brand: 'NaturaCare', images: [], iconKey: 'knee',
     mrp: 1499, price: 999, discount: 33, rating: 4.4, reviews: 678,
     inStock: true, sizes: ['Free Size'],
     colors: ['Black'],
@@ -221,7 +221,7 @@ export const products = [
   },
   {
     id: pid(), name: 'Sacro Lumbar Belt with Rigid Back', category: 'back',
-    brand: 'SpineGuard', images: [], emoji: '🔙',
+    brand: 'SpineGuard', images: [], iconKey: 'knee',
     mrp: 2999, price: 2199, discount: 27, rating: 4.7, reviews: 432,
     inStock: true, sizes: ['S','M','L','XL'],
     colors: ['Blue', 'Black'],
@@ -235,7 +235,7 @@ export const products = [
   },
   {
     id: pid(), name: 'Maternity Back Support Belt', category: 'back',
-    brand: 'FlexiCare', images: [], emoji: '🤰',
+    brand: 'FlexiCare', images: [], iconKey: 'knee',
     mrp: 1299, price: 899, discount: 31, rating: 4.6, reviews: 1567,
     inStock: true, sizes: ['S','M','L','XL'],
     colors: ['White', 'Beige', 'Black'],
@@ -249,7 +249,7 @@ export const products = [
   },
   {
     id: pid(), name: 'Slim Profile Waist Trimmer', category: 'back',
-    brand: 'ActivePro', images: [], emoji: '🔙',
+    brand: 'ActivePro', images: [], iconKey: 'knee',
     mrp: 799, price: 499, discount: 38, rating: 4.2, reviews: 2890,
     inStock: true, sizes: ['Free Size'],
     colors: ['Black'],
@@ -263,7 +263,7 @@ export const products = [
   },
   {
     id: pid(), name: 'Rigid Taylor Brace', category: 'back',
-    brand: 'MedRestore', images: [], emoji: '🔙',
+    brand: 'MedRestore', images: [], iconKey: 'knee',
     mrp: 4999, price: 3799, discount: 24, rating: 4.5, reviews: 189,
     inStock: true, sizes: ['S','M','L','XL'],
     colors: ['Beige'],
@@ -277,7 +277,7 @@ export const products = [
   },
   {
     id: pid(), name: 'Coccyx Seat Cushion', category: 'back',
-    brand: 'SpineGuard', images: [], emoji: '💺',
+    brand: 'SpineGuard', images: [], iconKey: 'knee',
     mrp: 1999, price: 1499, discount: 25, rating: 4.6, reviews: 3456,
     inStock: true, sizes: ['Standard'],
     colors: ['Black', 'Grey'],
@@ -291,7 +291,7 @@ export const products = [
   },
   {
     id: pid(), name: 'Elastic Back Support Band', category: 'back',
-    brand: 'FlexiCare', images: [], emoji: '🔙',
+    brand: 'FlexiCare', images: [], iconKey: 'knee',
     mrp: 599, price: 399, discount: 33, rating: 4.3, reviews: 1234,
     inStock: true, sizes: ['S','M','L','XL'],
     colors: ['Black', 'Beige'],
@@ -305,7 +305,7 @@ export const products = [
   },
   {
     id: pid(), name: 'Ventilated Lumbar Support', category: 'back',
-    brand: 'OrthoFlex', images: [], emoji: '🔙',
+    brand: 'OrthoFlex', images: [], iconKey: 'knee',
     mrp: 1799, price: 1199, discount: 33, rating: 4.5, reviews: 567,
     inStock: true, sizes: ['M','L','XL','XXL'],
     colors: ['Black'],
@@ -321,7 +321,7 @@ export const products = [
   // ---- Neck Support (6) ----
   {
     id: pid(), name: 'Soft Cervical Collar', category: 'neck',
-    brand: 'MediSupport', images: [], emoji: '🧣',
+    brand: 'MediSupport', images: [], iconKey: 'knee',
     mrp: 499, price: 349, discount: 30, rating: 4.4, reviews: 1890,
     inStock: true, sizes: ['S','M','L'],
     colors: ['Beige', 'White'],
@@ -335,7 +335,7 @@ export const products = [
   },
   {
     id: pid(), name: 'Rigid Cervical Collar (Philadelphia)', category: 'neck',
-    brand: 'MedRestore', images: [], emoji: '🧣',
+    brand: 'MedRestore', images: [], iconKey: 'knee',
     mrp: 1999, price: 1499, discount: 25, rating: 4.6, reviews: 345,
     inStock: true, sizes: ['S','M','L'],
     colors: ['Blue'],
@@ -349,7 +349,7 @@ export const products = [
   },
   {
     id: pid(), name: 'Cervical Memory Foam Pillow', category: 'neck',
-    brand: 'SpineGuard', images: [], emoji: '🛏️',
+    brand: 'SpineGuard', images: [], iconKey: 'knee',
     mrp: 2499, price: 1799, discount: 28, rating: 4.7, reviews: 4567,
     inStock: true, sizes: ['Standard', 'Large'],
     colors: ['White'],
@@ -363,7 +363,7 @@ export const products = [
   },
   {
     id: pid(), name: 'Inflatable Cervical Traction Device', category: 'neck',
-    brand: 'OrthoFlex', images: [], emoji: '🧣',
+    brand: 'OrthoFlex', images: [], iconKey: 'knee',
     mrp: 1299, price: 899, discount: 31, rating: 4.3, reviews: 678,
     inStock: true, sizes: ['Free Size'],
     colors: ['Blue', 'Grey'],
@@ -377,7 +377,7 @@ export const products = [
   },
   {
     id: pid(), name: 'Neck Heating Pad (Electric)', category: 'neck',
-    brand: 'NaturaCare', images: [], emoji: '🧣',
+    brand: 'NaturaCare', images: [], iconKey: 'knee',
     mrp: 1799, price: 1299, discount: 28, rating: 4.5, reviews: 901,
     inStock: true, sizes: ['Free Size'],
     colors: ['Grey'],
@@ -391,7 +391,7 @@ export const products = [
   },
   {
     id: pid(), name: 'Travel Neck Pillow (Orthopedic)', category: 'neck',
-    brand: 'FlexiCare', images: [], emoji: '✈️',
+    brand: 'FlexiCare', images: [], iconKey: 'knee',
     mrp: 999, price: 699, discount: 30, rating: 4.4, reviews: 2345,
     inStock: true, sizes: ['Standard'],
     colors: ['Grey', 'Navy', 'Black'],
@@ -407,7 +407,7 @@ export const products = [
   // ---- Wrist & Hand Support (8) ----
   {
     id: pid(), name: 'Wrist Compression Support', category: 'wrist',
-    brand: 'FlexiCare', images: [], emoji: '🤚',
+    brand: 'FlexiCare', images: [], iconKey: 'knee',
     mrp: 599, price: 399, discount: 33, rating: 4.3, reviews: 1567,
     inStock: true, sizes: ['S','M','L'],
     colors: ['Black', 'Blue'],
@@ -421,7 +421,7 @@ export const products = [
   },
   {
     id: pid(), name: 'Wrist Splint with Thumb Support', category: 'wrist',
-    brand: 'OrthoFlex', images: [], emoji: '🤚',
+    brand: 'OrthoFlex', images: [], iconKey: 'knee',
     mrp: 999, price: 699, discount: 30, rating: 4.5, reviews: 876,
     inStock: true, sizes: ['S','M','L'],
     colors: ['Black'],
@@ -435,7 +435,7 @@ export const products = [
   },
   {
     id: pid(), name: 'Carpal Tunnel Wrist Brace', category: 'wrist',
-    brand: 'MediSupport', images: [], emoji: '🤚',
+    brand: 'MediSupport', images: [], iconKey: 'knee',
     mrp: 1499, price: 999, discount: 33, rating: 4.6, reviews: 2134,
     inStock: true, sizes: ['S','M','L','XL'],
     colors: ['Black', 'Grey'],
@@ -449,7 +449,7 @@ export const products = [
   },
   {
     id: pid(), name: 'Finger Splint (Mallet)', category: 'wrist',
-    brand: 'MedRestore', images: [], emoji: '☝️',
+    brand: 'MedRestore', images: [], iconKey: 'knee',
     mrp: 299, price: 199, discount: 33, rating: 4.2, reviews: 456,
     inStock: true, sizes: ['S','M','L'],
     colors: ['Blue'],
@@ -463,7 +463,7 @@ export const products = [
   },
   {
     id: pid(), name: 'Wrist Wrap with Thumb Loop', category: 'wrist',
-    brand: 'ActivePro', images: [], emoji: '🤚',
+    brand: 'ActivePro', images: [], iconKey: 'knee',
     mrp: 499, price: 349, discount: 30, rating: 4.3, reviews: 1234,
     inStock: true, sizes: ['Free Size'],
     colors: ['Black', 'Red'],
@@ -477,7 +477,7 @@ export const products = [
   },
   {
     id: pid(), name: 'Cock-Up Wrist Splint', category: 'wrist',
-    brand: 'MediSupport', images: [], emoji: '🤚',
+    brand: 'MediSupport', images: [], iconKey: 'knee',
     mrp: 899, price: 649, discount: 28, rating: 4.4, reviews: 567,
     inStock: true, sizes: ['S','M','L'],
     colors: ['Beige', 'Black'],
@@ -491,7 +491,7 @@ export const products = [
   },
   {
     id: pid(), name: 'Arthritis Compression Gloves', category: 'wrist',
-    brand: 'NaturaCare', images: [], emoji: '🧤',
+    brand: 'NaturaCare', images: [], iconKey: 'knee',
     mrp: 799, price: 549, discount: 31, rating: 4.5, reviews: 1890,
     inStock: true, sizes: ['S','M','L','XL'],
     colors: ['Grey', 'Black'],
@@ -505,7 +505,7 @@ export const products = [
   },
   {
     id: pid(), name: 'Hand Grip Strengthener Set', category: 'wrist',
-    brand: 'ActivePro', images: [], emoji: '✊',
+    brand: 'ActivePro', images: [], iconKey: 'knee',
     mrp: 699, price: 449, discount: 36, rating: 4.4, reviews: 3456,
     inStock: true, sizes: ['Standard'],
     colors: ['Blue', 'Green', 'Red'],
@@ -521,7 +521,7 @@ export const products = [
   // ---- Ankle & Foot Support (7) ----
   {
     id: pid(), name: 'Ankle Stabilizer with Straps', category: 'ankle',
-    brand: 'OrthoFlex', images: [], emoji: '🦶',
+    brand: 'OrthoFlex', images: [], iconKey: 'knee',
     mrp: 1299, price: 899, discount: 31, rating: 4.5, reviews: 1345,
     inStock: true, sizes: ['S','M','L','XL'],
     colors: ['Black'],
@@ -535,7 +535,7 @@ export const products = [
   },
   {
     id: pid(), name: 'Compression Ankle Sleeve (Pair)', category: 'ankle',
-    brand: 'FlexiCare', images: [], emoji: '🦶',
+    brand: 'FlexiCare', images: [], iconKey: 'knee',
     mrp: 699, price: 449, discount: 36, rating: 4.4, reviews: 2567,
     inStock: true, sizes: ['S','M','L','XL'],
     colors: ['Black', 'Grey'],
@@ -549,7 +549,7 @@ export const products = [
   },
   {
     id: pid(), name: 'Plantar Fasciitis Night Splint', category: 'ankle',
-    brand: 'MedRestore', images: [], emoji: '🦶',
+    brand: 'MedRestore', images: [], iconKey: 'knee',
     mrp: 1999, price: 1399, discount: 30, rating: 4.3, reviews: 456,
     inStock: true, sizes: ['S/M','L/XL'],
     colors: ['Blue'],
@@ -563,7 +563,7 @@ export const products = [
   },
   {
     id: pid(), name: 'Silicone Gel Heel Cups (Pair)', category: 'ankle',
-    brand: 'NaturaCare', images: [], emoji: '🦶',
+    brand: 'NaturaCare', images: [], iconKey: 'knee',
     mrp: 399, price: 249, discount: 38, rating: 4.5, reviews: 5678,
     inStock: true, sizes: ['S','M','L'],
     colors: ['Transparent'],
@@ -577,7 +577,7 @@ export const products = [
   },
   {
     id: pid(), name: 'Air Cast Walking Boot', category: 'ankle',
-    brand: 'MedRestore', images: [], emoji: '🥾',
+    brand: 'MedRestore', images: [], iconKey: 'knee',
     mrp: 4999, price: 3499, discount: 30, rating: 4.7, reviews: 234,
     inStock: true, sizes: ['S','M','L','XL'],
     colors: ['Black'],
@@ -591,7 +591,7 @@ export const products = [
   },
   {
     id: pid(), name: 'Arch Support Insoles (Pair)', category: 'ankle',
-    brand: 'SpineGuard', images: [], emoji: '👟',
+    brand: 'SpineGuard', images: [], iconKey: 'knee',
     mrp: 999, price: 649, discount: 35, rating: 4.4, reviews: 3456,
     inStock: true, sizes: ['S','M','L','XL'],
     colors: ['Blue'],
@@ -605,7 +605,7 @@ export const products = [
   },
   {
     id: pid(), name: 'Ankle Binder Elastic', category: 'ankle',
-    brand: 'FlexiCare', images: [], emoji: '🦶',
+    brand: 'FlexiCare', images: [], iconKey: 'knee',
     mrp: 399, price: 279, discount: 30, rating: 4.3, reviews: 1890,
     inStock: true, sizes: ['S','M','L','XL'],
     colors: ['Beige'],
@@ -621,7 +621,7 @@ export const products = [
   // ---- Elbow Support (5) ----
   {
     id: pid(), name: 'Elbow Compression Sleeve', category: 'elbow',
-    brand: 'FlexiCare', images: [], emoji: '💪',
+    brand: 'FlexiCare', images: [], iconKey: 'knee',
     mrp: 599, price: 399, discount: 33, rating: 4.4, reviews: 1234,
     inStock: true, sizes: ['S','M','L','XL'],
     colors: ['Black', 'Blue'],
@@ -635,7 +635,7 @@ export const products = [
   },
   {
     id: pid(), name: 'Tennis Elbow Support Strap', category: 'elbow',
-    brand: 'OrthoFlex', images: [], emoji: '💪',
+    brand: 'OrthoFlex', images: [], iconKey: 'knee',
     mrp: 799, price: 549, discount: 31, rating: 4.5, reviews: 1890,
     inStock: true, sizes: ['Free Size'],
     colors: ['Black'],
@@ -649,7 +649,7 @@ export const products = [
   },
   {
     id: pid(), name: 'Elbow Hinged Brace', category: 'elbow',
-    brand: 'MediSupport', images: [], emoji: '💪',
+    brand: 'MediSupport', images: [], iconKey: 'knee',
     mrp: 1999, price: 1399, discount: 30, rating: 4.5, reviews: 345,
     inStock: true, sizes: ['S','M','L'],
     colors: ['Black'],
@@ -663,7 +663,7 @@ export const products = [
   },
   {
     id: pid(), name: 'Copper Elbow Support', category: 'elbow',
-    brand: 'NaturaCare', images: [], emoji: '💪',
+    brand: 'NaturaCare', images: [], iconKey: 'knee',
     mrp: 699, price: 449, discount: 36, rating: 4.3, reviews: 789,
     inStock: true, sizes: ['S','M','L','XL'],
     colors: ['Black'],
@@ -677,7 +677,7 @@ export const products = [
   },
   {
     id: pid(), name: 'Elbow Immobilizer Brace', category: 'elbow',
-    brand: 'MedRestore', images: [], emoji: '💪',
+    brand: 'MedRestore', images: [], iconKey: 'knee',
     mrp: 2499, price: 1799, discount: 28, rating: 4.4, reviews: 234,
     inStock: true, sizes: ['S','M','L'],
     colors: ['Blue'],
@@ -693,7 +693,7 @@ export const products = [
   // ---- Shoulder Support (4) ----
   {
     id: pid(), name: 'Shoulder Immobilizer Sling', category: 'shoulder',
-    brand: 'MedRestore', images: [], emoji: '🏋️',
+    brand: 'MedRestore', images: [], iconKey: 'knee',
     mrp: 999, price: 699, discount: 30, rating: 4.5, reviews: 567,
     inStock: true, sizes: ['S','M','L','XL'],
     colors: ['Blue', 'Black'],
@@ -707,7 +707,7 @@ export const products = [
   },
   {
     id: pid(), name: 'Neoprene Shoulder Support', category: 'shoulder',
-    brand: 'OrthoFlex', images: [], emoji: '🏋️',
+    brand: 'OrthoFlex', images: [], iconKey: 'knee',
     mrp: 1499, price: 999, discount: 33, rating: 4.4, reviews: 456,
     inStock: true, sizes: ['S','M','L','XL'],
     colors: ['Black'],
@@ -721,7 +721,7 @@ export const products = [
   },
   {
     id: pid(), name: 'Clavicle Brace (Figure 8)', category: 'shoulder',
-    brand: 'SpineGuard', images: [], emoji: '🏋️',
+    brand: 'SpineGuard', images: [], iconKey: 'knee',
     mrp: 899, price: 599, discount: 33, rating: 4.3, reviews: 890,
     inStock: true, sizes: ['S','M','L','XL'],
     colors: ['Beige', 'Black'],
@@ -735,7 +735,7 @@ export const products = [
   },
   {
     id: pid(), name: 'Arm Elevation Sling', category: 'shoulder',
-    brand: 'MedRestore', images: [], emoji: '🏋️',
+    brand: 'MedRestore', images: [], iconKey: 'knee',
     mrp: 799, price: 549, discount: 31, rating: 4.2, reviews: 234,
     inStock: true, sizes: ['Free Size'],
     colors: ['Blue'],
@@ -751,7 +751,7 @@ export const products = [
   // ---- Walking Aids / Mobility (8) ----
   {
     id: pid(), name: 'Adjustable Walking Stick (Aluminium)', category: 'mobility',
-    brand: 'MobiAid', images: [], emoji: '🚶',
+    brand: 'MobiAid', images: [], iconKey: 'knee',
     mrp: 799, price: 549, discount: 31, rating: 4.5, reviews: 2345,
     inStock: true, sizes: ['Standard'],
     colors: ['Silver', 'Black'],
@@ -765,7 +765,7 @@ export const products = [
   },
   {
     id: pid(), name: 'Folding Walking Frame (Walker)', category: 'mobility',
-    brand: 'MobiAid', images: [], emoji: '🚶',
+    brand: 'MobiAid', images: [], iconKey: 'knee',
     mrp: 2999, price: 2199, discount: 27, rating: 4.6, reviews: 567,
     inStock: true, sizes: ['Standard'],
     colors: ['Silver'],
@@ -779,7 +779,7 @@ export const products = [
   },
   {
     id: pid(), name: 'Forearm Crutches (Pair)', category: 'mobility',
-    brand: 'MobiAid', images: [], emoji: '🩼',
+    brand: 'MobiAid', images: [], iconKey: 'knee',
     mrp: 2499, price: 1799, discount: 28, rating: 4.5, reviews: 432,
     inStock: true, sizes: ['Standard'],
     colors: ['Grey'],
@@ -793,7 +793,7 @@ export const products = [
   },
   {
     id: pid(), name: 'Quadripod Walking Stick', category: 'mobility',
-    brand: 'MobiAid', images: [], emoji: '🚶',
+    brand: 'MobiAid', images: [], iconKey: 'knee',
     mrp: 1299, price: 899, discount: 31, rating: 4.4, reviews: 890,
     inStock: true, sizes: ['Standard'],
     colors: ['Grey', 'Black'],
@@ -807,7 +807,7 @@ export const products = [
   },
   {
     id: pid(), name: 'Wheelchair (Foldable Manual)', category: 'mobility',
-    brand: 'MobiAid', images: [], emoji: '🦽',
+    brand: 'MobiAid', images: [], iconKey: 'knee',
     mrp: 12999, price: 9999, discount: 23, rating: 4.7, reviews: 345,
     inStock: true, sizes: ['18 inch Seat'],
     colors: ['Blue/Silver'],
@@ -821,7 +821,7 @@ export const products = [
   },
   {
     id: pid(), name: 'Underarm Crutches (Pair)', category: 'mobility',
-    brand: 'MobiAid', images: [], emoji: '🩼',
+    brand: 'MobiAid', images: [], iconKey: 'knee',
     mrp: 1499, price: 999, discount: 33, rating: 4.3, reviews: 678,
     inStock: true, sizes: ['Adult', 'Youth'],
     colors: ['Silver'],
@@ -835,7 +835,7 @@ export const products = [
   },
   {
     id: pid(), name: 'Rollator Walker with Seat', category: 'mobility',
-    brand: 'MobiAid', images: [], emoji: '🚶',
+    brand: 'MobiAid', images: [], iconKey: 'knee',
     mrp: 7999, price: 5999, discount: 25, rating: 4.6, reviews: 234,
     inStock: true, sizes: ['Standard'],
     colors: ['Red', 'Blue'],
@@ -849,7 +849,7 @@ export const products = [
   },
   {
     id: pid(), name: 'Bed Wedge Pillow', category: 'mobility',
-    brand: 'SpineGuard', images: [], emoji: '🛏️',
+    brand: 'SpineGuard', images: [], iconKey: 'knee',
     mrp: 2499, price: 1799, discount: 28, rating: 4.5, reviews: 1234,
     inStock: true, sizes: ['Standard'],
     colors: ['White'],
@@ -865,7 +865,7 @@ export const products = [
   // ---- Posture Correctors (4) ----
   {
     id: pid(), name: 'Adjustable Posture Corrector', category: 'posture',
-    brand: 'SpineGuard', images: [], emoji: '🧍',
+    brand: 'SpineGuard', images: [], iconKey: 'knee',
     mrp: 999, price: 699, discount: 30, rating: 4.4, reviews: 3456,
     inStock: true, sizes: ['S','M','L','XL'],
     colors: ['Black'],
@@ -879,7 +879,7 @@ export const products = [
   },
   {
     id: pid(), name: 'Posture Corrector with Back Brace', category: 'posture',
-    brand: 'OrthoFlex', images: [], emoji: '🧍',
+    brand: 'OrthoFlex', images: [], iconKey: 'knee',
     mrp: 1799, price: 1299, discount: 28, rating: 4.5, reviews: 987,
     inStock: true, sizes: ['S','M','L','XL'],
     colors: ['Black'],
@@ -893,7 +893,7 @@ export const products = [
   },
   {
     id: pid(), name: 'Kids Posture Corrector', category: 'posture',
-    brand: 'FlexiCare', images: [], emoji: '🧒',
+    brand: 'FlexiCare', images: [], iconKey: 'knee',
     mrp: 699, price: 499, discount: 29, rating: 4.3, reviews: 567,
     inStock: true, sizes: ['XS','S','M'],
     colors: ['Black', 'Pink'],
@@ -907,7 +907,7 @@ export const products = [
   },
   {
     id: pid(), name: 'Smart Posture Reminder Device', category: 'posture',
-    brand: 'ActivePro', images: [], emoji: '📱',
+    brand: 'ActivePro', images: [], iconKey: 'knee',
     mrp: 2499, price: 1799, discount: 28, rating: 4.2, reviews: 345,
     inStock: true, sizes: ['Standard'],
     colors: ['White', 'Black'],
@@ -923,7 +923,7 @@ export const products = [
   // ---- Pain Relief & Recovery (6) ----
   {
     id: pid(), name: 'Hot & Cold Gel Pack (Reusable)', category: 'pain-relief',
-    brand: 'NaturaCare', images: [], emoji: '❄️',
+    brand: 'NaturaCare', images: [], iconKey: 'knee',
     mrp: 499, price: 349, discount: 30, rating: 4.5, reviews: 4567,
     inStock: true, sizes: ['Standard', 'Large'],
     colors: ['Blue'],
@@ -937,7 +937,7 @@ export const products = [
   },
   {
     id: pid(), name: 'Resistance Therapy Bands (Set of 5)', category: 'pain-relief',
-    brand: 'ActivePro', images: [], emoji: '🏋️',
+    brand: 'ActivePro', images: [], iconKey: 'knee',
     mrp: 899, price: 599, discount: 33, rating: 4.6, reviews: 5678,
     inStock: true, sizes: ['Standard'],
     colors: ['Multi-Color Set'],
@@ -951,7 +951,7 @@ export const products = [
   },
   {
     id: pid(), name: 'TENS Unit (Portable)', category: 'pain-relief',
-    brand: 'MediSupport', images: [], emoji: '⚡',
+    brand: 'MediSupport', images: [], iconKey: 'knee',
     mrp: 3999, price: 2799, discount: 30, rating: 4.5, reviews: 789,
     inStock: true, sizes: ['Standard'],
     colors: ['White'],
@@ -965,7 +965,7 @@ export const products = [
   },
   {
     id: pid(), name: 'Massage Ball Set', category: 'pain-relief',
-    brand: 'ActivePro', images: [], emoji: '⚾',
+    brand: 'ActivePro', images: [], iconKey: 'knee',
     mrp: 599, price: 399, discount: 33, rating: 4.4, reviews: 2345,
     inStock: true, sizes: ['Standard'],
     colors: ['Blue/Black'],
@@ -979,7 +979,7 @@ export const products = [
   },
   {
     id: pid(), name: 'Foam Roller (Medium Density)', category: 'pain-relief',
-    brand: 'ActivePro', images: [], emoji: '🧘',
+    brand: 'ActivePro', images: [], iconKey: 'knee',
     mrp: 1299, price: 899, discount: 31, rating: 4.5, reviews: 1567,
     inStock: true, sizes: ['18 inch', '36 inch'],
     colors: ['Blue', 'Black'],
@@ -993,7 +993,7 @@ export const products = [
   },
   {
     id: pid(), name: 'Electric Heating Pad (Multi-Purpose)', category: 'pain-relief',
-    brand: 'NaturaCare', images: [], emoji: '🔥',
+    brand: 'NaturaCare', images: [], iconKey: 'knee',
     mrp: 1499, price: 999, discount: 33, rating: 4.4, reviews: 2345,
     inStock: true, sizes: ['12x15 inch', '12x24 inch'],
     colors: ['Grey'],
@@ -1009,7 +1009,7 @@ export const products = [
   // ---- Rehabilitation Equipment (7) ----
   {
     id: pid(), name: 'Hand Exercise Ball (Gel)', category: 'rehab',
-    brand: 'ActivePro', images: [], emoji: '🟡',
+    brand: 'ActivePro', images: [], iconKey: 'knee',
     mrp: 399, price: 249, discount: 38, rating: 4.3, reviews: 3456,
     inStock: true, sizes: ['Soft', 'Medium', 'Firm'],
     colors: ['Yellow (Soft)', 'Green (Medium)', 'Blue (Firm)'],
@@ -1023,7 +1023,7 @@ export const products = [
   },
   {
     id: pid(), name: 'Pedal Exerciser (Mini Cycle)', category: 'rehab',
-    brand: 'MobiAid', images: [], emoji: '🚲',
+    brand: 'MobiAid', images: [], iconKey: 'knee',
     mrp: 2999, price: 2199, discount: 27, rating: 4.5, reviews: 789,
     inStock: true, sizes: ['Standard'],
     colors: ['Silver/Black'],
@@ -1037,7 +1037,7 @@ export const products = [
   },
   {
     id: pid(), name: 'Finger Exerciser (Piano Type)', category: 'rehab',
-    brand: 'ActivePro', images: [], emoji: '🎹',
+    brand: 'ActivePro', images: [], iconKey: 'knee',
     mrp: 499, price: 349, discount: 30, rating: 4.4, reviews: 1234,
     inStock: true, sizes: ['Standard'],
     colors: ['Black', 'Blue'],
@@ -1051,7 +1051,7 @@ export const products = [
   },
   {
     id: pid(), name: 'Balance Board (Wooden)', category: 'rehab',
-    brand: 'ActivePro', images: [], emoji: '🏄',
+    brand: 'ActivePro', images: [], iconKey: 'knee',
     mrp: 1999, price: 1399, discount: 30, rating: 4.5, reviews: 456,
     inStock: true, sizes: ['Standard'],
     colors: ['Wood/Black'],
@@ -1065,7 +1065,7 @@ export const products = [
   },
   {
     id: pid(), name: 'Shoulder Pulley (Over-Door)', category: 'rehab',
-    brand: 'OrthoFlex', images: [], emoji: '🚪',
+    brand: 'OrthoFlex', images: [], iconKey: 'knee',
     mrp: 799, price: 549, discount: 31, rating: 4.4, reviews: 890,
     inStock: true, sizes: ['Standard'],
     colors: ['Black/Silver'],
@@ -1079,7 +1079,7 @@ export const products = [
   },
   {
     id: pid(), name: 'Therapy Putty Set', category: 'rehab',
-    brand: 'FlexiCare', images: [], emoji: '🫳',
+    brand: 'FlexiCare', images: [], iconKey: 'knee',
     mrp: 699, price: 499, discount: 29, rating: 4.3, reviews: 678,
     inStock: true, sizes: ['Standard'],
     colors: ['Multi-Color Set'],
@@ -1093,7 +1093,7 @@ export const products = [
   },
   {
     id: pid(), name: 'Ankle Weight Set (Pair)', category: 'rehab',
-    brand: 'ActivePro', images: [], emoji: '🏋️',
+    brand: 'ActivePro', images: [], iconKey: 'knee',
     mrp: 1299, price: 899, discount: 31, rating: 4.4, reviews: 1567,
     inStock: true, sizes: ['1 kg', '2 kg', '3 kg'],
     colors: ['Black'],
@@ -1109,7 +1109,7 @@ export const products = [
   // ---- Compression Products (6) ----
   {
     id: pid(), name: 'Compression Stockings (Pair)', category: 'compression',
-    brand: 'MediSupport', images: [], emoji: '🧦',
+    brand: 'MediSupport', images: [], iconKey: 'knee',
     mrp: 1299, price: 899, discount: 31, rating: 4.5, reviews: 2345,
     inStock: true, sizes: ['S','M','L','XL'],
     colors: ['Beige', 'Black'],
@@ -1123,7 +1123,7 @@ export const products = [
   },
   {
     id: pid(), name: 'Thigh-High Compression Stockings', category: 'compression',
-    brand: 'MediSupport', images: [], emoji: '🧦',
+    brand: 'MediSupport', images: [], iconKey: 'knee',
     mrp: 1799, price: 1299, discount: 28, rating: 4.4, reviews: 567,
     inStock: true, sizes: ['S','M','L','XL'],
     colors: ['Beige', 'Black'],
@@ -1137,7 +1137,7 @@ export const products = [
   },
   {
     id: pid(), name: 'Compression Arm Sleeve (Pair)', category: 'compression',
-    brand: 'FlexiCare', images: [], emoji: '💪',
+    brand: 'FlexiCare', images: [], iconKey: 'knee',
     mrp: 699, price: 499, discount: 29, rating: 4.3, reviews: 890,
     inStock: true, sizes: ['S','M','L','XL'],
     colors: ['Black', 'White', 'Blue'],
@@ -1151,7 +1151,7 @@ export const products = [
   },
   {
     id: pid(), name: 'Calf Compression Sleeves (Pair)', category: 'compression',
-    brand: 'ActivePro', images: [], emoji: '🦵',
+    brand: 'ActivePro', images: [], iconKey: 'knee',
     mrp: 799, price: 549, discount: 31, rating: 4.4, reviews: 1567,
     inStock: true, sizes: ['S','M','L','XL'],
     colors: ['Black', 'White'],
@@ -1165,7 +1165,7 @@ export const products = [
   },
   {
     id: pid(), name: 'Compression Socks (Pair)', category: 'compression',
-    brand: 'NaturaCare', images: [], emoji: '🧦',
+    brand: 'NaturaCare', images: [], iconKey: 'knee',
     mrp: 599, price: 399, discount: 33, rating: 4.5, reviews: 4567,
     inStock: true, sizes: ['S','M','L','XL'],
     colors: ['Black', 'White', 'Grey', 'Navy'],
@@ -1179,7 +1179,7 @@ export const products = [
   },
   {
     id: pid(), name: 'Compression Shorts', category: 'compression',
-    brand: 'ActivePro', images: [], emoji: '🩳',
+    brand: 'ActivePro', images: [], iconKey: 'knee',
     mrp: 1299, price: 899, discount: 31, rating: 4.3, reviews: 789,
     inStock: true, sizes: ['S','M','L','XL','XXL'],
     colors: ['Black'],

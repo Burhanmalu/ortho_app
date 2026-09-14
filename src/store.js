@@ -579,7 +579,7 @@ export function addAdminProduct(newProdData) {
     rating: 4.8,
     reviews: 1,
     inStock: true,
-    emoji: '🩺',
+    iconKey: 'knee',
     images: [],
     bulkTiers: [
       { minQty: Number(newProdData.moq) || 10, maxQty: (Number(newProdData.moq) || 10) + 14, price: Number(newProdData.wholesalePrice) || 500, label: '10–24 Units' },

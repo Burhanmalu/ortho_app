@@ -215,3 +215,14 @@ export const initialBroadcastNotifications = [
     clicked: 2110
   }
 ];
+
+export const businessTypes = [
+  'Hospital / Clinic',
+  'Retail Pharmacy / Medical Store',
+  'Orthopedic Care Center',
+  'Physiotherapy Center',
+  'Medical Equipment Distributor',
+  'Rehabilitation Center',
+  'Surgical & Nursing Home',
+  'Other Healthcare Business'
+];

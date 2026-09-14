@@ -1,84 +1,104 @@
 // ========================================
-// Product Listing Screen
+// Product Listing Screen — OrthoCare
 // ========================================
+
 import { navigate } from '../router.js';
 import { categories } from '../data/categories.js';
 import { products, getProductsByCategory, formatPrice } from '../data/products.js';
 import { icons } from '../data/icons.js';
-import { renderBackHeader, renderBottomNav, renderProductCard, showModal, closeModal } from '../components/index.js';
+import { renderBackHeader, renderBottomNav, renderProductCard, renderEmptyState, showModal } from '../components/index.js';
 
 export default function ProductListingScreen(appEl, categoryId) {
   const el = document.createElement('div');
   el.className = 'screen screen-with-nav';
 
   const category = categories.find(c => c.id === categoryId);
-  const catName = category ? category.name : 'All Products';
+  const catName = category ? category.name : (categoryId === 'all' ? 'All Products' : 'Orthopedic Products');
   let productList = categoryId === 'all' ? [...products] : getProductsByCategory(categoryId);
   let filteredList = [...productList];
   let sortBy = 'relevance';
-  let activeFilters = { sizes: [], priceRange: null, supportLevel: null, material: null };
+  let activeFilters = { sizes: [], priceRange: null, supportLevel: null };
 
-  // Header
+  // 1. Header
   el.appendChild(renderBackHeader(catName));
 
-  // Listing header with count + filter/sort
-  const listingHeader = document.createElement('div');
-  listingHeader.className = 'listing-header';
-  function updateListingHeader() {
-    listingHeader.innerHTML = `
-      <span class="listing-count">${filteredList.length} Products</span>
-      <div class="listing-actions">
-        <button class="listing-action-btn" id="filter-btn">${icons.filter} Filter</button>
-        <button class="listing-action-btn" id="sort-btn">${icons.sort} Sort</button>
+  // 2. Bar with count & Filter/Sort buttons
+  const bar = document.createElement('div');
+  bar.style.padding = '12px 16px';
+  bar.style.display = 'flex';
+  bar.style.justifyContent = 'space-between';
+  bar.style.alignItems = 'center';
+  bar.style.background = '#FFFFFF';
+  bar.style.borderBottom = '1px solid var(--border)';
+
+  function updateBar() {
+    bar.innerHTML = `
+      <span style="font-size:12px;font-weight:600;color:var(--text-secondary)">${filteredList.length} Products</span>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-secondary btn-sm" id="filter-btn">
+          ${icons.filter} Filter
+        </button>
+        <button class="btn btn-secondary btn-sm" id="sort-btn">
+          ${icons.sort} Sort
+        </button>
       </div>
     `;
-    listingHeader.querySelector('#filter-btn').addEventListener('click', showFilterModal);
-    listingHeader.querySelector('#sort-btn').addEventListener('click', showSortModal);
+    bar.querySelector('#filter-btn').addEventListener('click', showFilterModal);
+    bar.querySelector('#sort-btn').addEventListener('click', showSortModal);
   }
-  updateListingHeader();
-  el.appendChild(listingHeader);
+  updateBar();
+  el.appendChild(bar);
 
-  // Product grid
+  // 3. Grid Container
   const gridContainer = document.createElement('div');
-  gridContainer.style.padding = 'var(--sp-md) 0';
+  gridContainer.style.padding = '16px';
   const grid = document.createElement('div');
-  grid.className = 'product-grid';
+  grid.style.display = 'grid';
+  grid.style.gridTemplateColumns = '1fr 1fr';
+  grid.style.gap = '12px';
   gridContainer.appendChild(grid);
   el.appendChild(gridContainer);
 
   function renderGrid() {
     grid.innerHTML = '';
     if (filteredList.length === 0) {
-      grid.innerHTML = `
-        <div style="grid-column:1/-1;padding:var(--sp-4xl) var(--sp-2xl);text-align:center">
-          <div style="font-size:48px;margin-bottom:var(--sp-lg);opacity:0.4">🔍</div>
-          <h3 style="font-size:var(--fs-lg);margin-bottom:var(--sp-sm)">No products found</h3>
-          <p style="color:var(--color-text-secondary);font-size:var(--fs-md)">Try adjusting your filters</p>
-        </div>
-      `;
+      grid.style.display = 'block';
+      grid.appendChild(renderEmptyState({
+        icon: icons.search,
+        title: 'No products found',
+        desc: 'Try adjusting your filters or price range to find matching supports.',
+        ctaLabel: 'Clear Filters',
+        ctaAction: () => {
+          activeFilters = { sizes: [], priceRange: null, supportLevel: null };
+          filteredList = [...productList];
+          updateBar();
+          grid.style.display = 'grid';
+          renderGrid();
+        }
+      }));
       return;
     }
+    grid.style.display = 'grid';
     filteredList.forEach(p => grid.appendChild(renderProductCard(p)));
   }
   renderGrid();
 
-  // Sort modal
+  // Sort Modal
   function showSortModal() {
     const options = [
-      { id: 'relevance', label: 'Relevance' },
+      { id: 'relevance', label: 'Relevance & Popularity' },
       { id: 'price-low', label: 'Price: Low to High' },
       { id: 'price-high', label: 'Price: High to Low' },
       { id: 'rating', label: 'Customer Rating' },
-      { id: 'discount', label: 'Discount' },
-      { id: 'newest', label: 'Newest First' },
+      { id: 'discount', label: 'Discount %' },
     ];
-    const { close, container } = showModal('Sort By', `
-      <div style="display:flex;flex-direction:column;gap:4px">
+    const { close, container } = showModal('Sort Products', `
+      <div style="display:flex;flex-direction:column;gap:6px">
         ${options.map(o => `
-          <button class="payment-option ${sortBy === o.id ? 'selected' : ''}" data-sort="${o.id}" style="cursor:pointer">
-            <div class="payment-radio"></div>
-            <span class="payment-label">${o.label}</span>
-          </button>
+          <div class="sort-option" data-sort="${o.id}" style="padding:12px 14px;border-radius:var(--radius-md);border:1px solid ${sortBy === o.id ? 'var(--primary)' : 'var(--border)'};background:${sortBy === o.id ? 'var(--primary-bg)' : '#FFFFFF'};display:flex;justify-content:space-between;align-items:center;cursor:pointer">
+            <span style="font-size:13px;font-weight:${sortBy === o.id ? '700' : '500'};color:var(--text)">${o.label}</span>
+            ${sortBy === o.id ? `<span style="color:var(--primary)">${icons.check}</span>` : ''}
+          </div>
         `).join('')}
       </div>
     `);
@@ -88,102 +108,95 @@ export default function ProductListingScreen(appEl, categoryId) {
         sortBy = btn.dataset.sort;
         applySort();
         renderGrid();
-        updateListingHeader();
         close();
       });
     });
   }
 
   function applySort() {
-    switch (sortBy) {
-      case 'price-low': filteredList.sort((a, b) => a.price - b.price); break;
-      case 'price-high': filteredList.sort((a, b) => b.price - a.price); break;
-      case 'rating': filteredList.sort((a, b) => b.rating - a.rating); break;
-      case 'discount': filteredList.sort((a, b) => b.discount - a.discount); break;
-      default: filteredList = [...productList]; break;
-    }
+    if (sortBy === 'price-low') filteredList.sort((a, b) => a.price - b.price);
+    else if (sortBy === 'price-high') filteredList.sort((a, b) => b.price - a.price);
+    else if (sortBy === 'rating') filteredList.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+    else if (sortBy === 'discount') filteredList.sort((a, b) => (b.discount || 0) - (a.discount || 0));
   }
 
-  // Filter modal
+  // Filter Modal
   function showFilterModal() {
-    const { close, container } = showModal('Filters', `
-      <div class="filter-section">
-        <div class="filter-section-title">Size</div>
-        <div class="filter-options">
-          ${['S','M','L','XL','XXL','Free Size'].map(s => `
-            <button class="filter-option ${activeFilters.sizes.includes(s) ? 'selected' : ''}" data-filter="size" data-val="${s}">${s}</button>
-          `).join('')}
+    const { close, container } = showModal('Filter Products', `
+      <div style="display:flex;flex-direction:column;gap:18px">
+        <div>
+          <label style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:8px;display:block">Price Range</label>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <button class="btn btn-secondary btn-sm ${activeFilters.priceRange === 'under-1000' ? 'active' : ''}" data-price="under-1000">Under ₹1,000</button>
+            <button class="btn btn-secondary btn-sm ${activeFilters.priceRange === '1000-2500' ? 'active' : ''}" data-price="1000-2500">₹1,000 – ₹2,500</button>
+            <button class="btn btn-secondary btn-sm ${activeFilters.priceRange === 'above-2500' ? 'active' : ''}" data-price="above-2500">Above ₹2,500</button>
+            <button class="btn btn-secondary btn-sm ${!activeFilters.priceRange ? 'active' : ''}" data-price="all">All Prices</button>
+          </div>
         </div>
-      </div>
-      <div class="filter-section">
-        <div class="filter-section-title">Price Range</div>
-        <div class="filter-options">
-          ${[
-            { val: '0-500', label: 'Under ₹500' },
-            { val: '500-1000', label: '₹500 – ₹1,000' },
-            { val: '1000-2500', label: '₹1,000 – ₹2,500' },
-            { val: '2500-99999', label: '₹2,500+' },
-          ].map(r => `
-            <button class="filter-option ${activeFilters.priceRange === r.val ? 'selected' : ''}" data-filter="price" data-val="${r.val}">${r.label}</button>
-          `).join('')}
-        </div>
-      </div>
-      <div class="filter-section">
-        <div class="filter-section-title">Rating</div>
-        <div class="filter-options">
-          ${['4', '3', '2'].map(r => `
-            <button class="filter-option" data-filter="rating" data-val="${r}">${r}★ & Above</button>
-          `).join('')}
+        <div>
+          <label style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:8px;display:block">Available Sizes</label>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            ${['Universal', 'S', 'M', 'L', 'XL', 'XXL'].map(sz => `
+              <button class="size-chip btn btn-secondary btn-sm ${activeFilters.sizes.includes(sz) ? 'active' : ''}" data-size="${sz}">${sz}</button>
+            `).join('')}
+          </div>
         </div>
       </div>
     `, `
-      <button class="btn btn-secondary btn-block" id="filter-clear">Clear All</button>
-      <button class="btn btn-primary btn-block" id="filter-apply">Apply Filters</button>
+      <button class="btn btn-ghost btn-sm" id="btn-reset-filters">Reset</button>
+      <button class="btn btn-primary btn-sm" id="btn-apply-filters">Apply Filters</button>
     `);
 
-    // Toggle filter selections
-    container.querySelectorAll('.filter-option').forEach(opt => {
-      opt.addEventListener('click', () => opt.classList.toggle('selected'));
+    container.querySelectorAll('[data-price]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        container.querySelectorAll('[data-price]').forEach(b => b.classList.remove('btn-primary'));
+        btn.classList.add('btn-primary');
+        activeFilters.priceRange = btn.dataset.price === 'all' ? null : btn.dataset.price;
+      });
     });
 
-    container.querySelector('#filter-apply').addEventListener('click', () => {
-      // Read selected filters
-      const selectedSizes = [...container.querySelectorAll('[data-filter="size"].selected')].map(e => e.dataset.val);
-      const selectedPrice = container.querySelector('[data-filter="price"].selected');
-      const selectedRating = container.querySelector('[data-filter="rating"].selected');
+    container.querySelectorAll('.size-chip').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const sz = btn.dataset.size;
+        if (activeFilters.sizes.includes(sz)) {
+          activeFilters.sizes = activeFilters.sizes.filter(s => s !== sz);
+          btn.classList.remove('btn-primary');
+        } else {
+          activeFilters.sizes.push(sz);
+          btn.classList.add('btn-primary');
+        }
+      });
+    });
 
-      activeFilters.sizes = selectedSizes;
-      activeFilters.priceRange = selectedPrice ? selectedPrice.dataset.val : null;
-
-      // Apply
+    container.querySelector('#btn-reset-filters')?.addEventListener('click', () => {
+      activeFilters = { sizes: [], priceRange: null, supportLevel: null };
       filteredList = [...productList];
-      if (selectedSizes.length > 0) {
-        filteredList = filteredList.filter(p => p.sizes.some(s => selectedSizes.includes(s)));
-      }
-      if (selectedPrice) {
-        const [min, max] = selectedPrice.dataset.val.split('-').map(Number);
-        filteredList = filteredList.filter(p => p.price >= min && p.price <= max);
-      }
-      if (selectedRating) {
-        const minR = parseFloat(selectedRating.dataset.val);
-        filteredList = filteredList.filter(p => p.rating >= minR);
-      }
       applySort();
+      updateBar();
       renderGrid();
-      updateListingHeader();
       close();
     });
 
-    container.querySelector('#filter-clear').addEventListener('click', () => {
-      activeFilters = { sizes: [], priceRange: null, supportLevel: null, material: null };
-      filteredList = [...productList];
+    container.querySelector('#btn-apply-filters')?.addEventListener('click', () => {
+      filteredList = productList.filter(p => {
+        if (activeFilters.priceRange === 'under-1000' && p.price >= 1000) return false;
+        if (activeFilters.priceRange === '1000-2500' && (p.price < 1000 || p.price > 2500)) return false;
+        if (activeFilters.priceRange === 'above-2500' && p.price <= 2500) return false;
+        if (activeFilters.sizes.length > 0 && p.sizes) {
+          const match = p.sizes.some(s => activeFilters.sizes.includes(s));
+          if (!match) return false;
+        }
+        return true;
+      });
+      applySort();
+      updateBar();
       renderGrid();
-      updateListingHeader();
       close();
     });
   }
 
   appEl.appendChild(el);
+
   const nav = renderBottomNav('categories');
   appEl.appendChild(nav);
 

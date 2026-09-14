@@ -1,5 +1,5 @@
 // ========================================
-// Wholesale Product Listing Screen
+// Wholesale Product Listing Screen - Redesigned
 // ========================================
 
 import { navigate } from '../../router.js';
@@ -7,38 +7,39 @@ import * as store from '../../store.js';
 import { categories } from '../../data/categories.js';
 import { products, getProductsByCategory, formatPrice, searchProducts } from '../../data/products.js';
 import { icons } from '../../data/icons.js';
-import { renderWholesaleBottomNav } from '../../components/index.js';
+import { renderWholesaleBottomNav, renderEmptyState } from '../../components/index.js';
 
 export default function WholesaleProductListingScreen(appEl, initialCat = 'all') {
   const el = document.createElement('div');
   el.className = 'screen-content';
-  el.style.background = '#f8fafc';
+  el.style.background = 'var(--bg-light)';
+  el.style.paddingBottom = '110px';
 
   let currentCat = initialCat;
   let currentSearch = '';
 
   el.innerHTML = `
     <!-- Top B2B Header -->
-    <div style="background:#0f3647; color:#ffffff; padding:16px 20px; position:sticky; top:0; z-index:50">
+    <div style="background:var(--deep-navy); color:var(--text-white); padding:16px; position:sticky; top:0; z-index:40">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px">
         <div>
-          <h2 style="font-size:18px; font-weight:800; margin:0">Wholesale B2B Catalog</h2>
-          <div style="font-size:11px; opacity:0.8">Institutional Pricing & Master Carton Lots</div>
+          <h2 style="font-size:16px; font-weight:700; margin:0">Wholesale B2B Catalog</h2>
+          <div style="font-size:11px; color:var(--border); margin-top:2px">Institutional Pricing & Master Carton Lots</div>
         </div>
-        <button id="btn-open-bulk-pad" class="btn btn-sm" style="background:#0d9488; color:#ffffff; border:none; font-weight:700; font-size:11px; padding:6px 12px; border-radius:6px">
-          📝 Bulk Pad Mode
+        <button id="btn-open-bulk-pad" class="btn btn-primary btn-sm" style="font-size:11px; padding:6px 12px; display:inline-flex; align-items:center; gap:6px">
+          ${icons.fileText} Bulk Pad
         </button>
       </div>
 
       <!-- Search Input -->
-      <div style="display:flex; align-items:center; gap:8px; background:#ffffff; border-radius:8px; padding:6px 12px">
-        <span style="color:#64748b">${icons.search}</span>
-        <input type="text" id="b2b-search" placeholder="Search product name, SKU or medical specs..." style="border:none; outline:none; width:100%; font-size:13px; color:#0f172a">
+      <div style="display:flex; align-items:center; gap:8px; background:var(--bg-white); border-radius:var(--radius-md); padding:8px 12px">
+        <span style="color:var(--text-secondary); width:16px; height:16px; display:inline-flex">${icons.search}</span>
+        <input type="text" id="b2b-search" placeholder="Search by name, SKU or medical specs..." style="border:none; outline:none; width:100%; font-size:13px; color:var(--text); background:transparent" />
       </div>
     </div>
 
     <!-- Category Filter Horizontal Strip -->
-    <div style="background:#ffffff; border-bottom:1px solid #e2e8f0; padding:10px 16px; overflow-x:auto; white-space:nowrap; display:flex; gap:8px" id="category-strip">
+    <div style="background:var(--bg-white); border-bottom:1px solid var(--border); padding:10px 16px; overflow-x:auto; white-space:nowrap; display:flex; gap:8px" id="category-strip">
       <button class="filter-chip ${currentCat === 'all' ? 'active' : ''}" data-cat="all">All Ortho (${products.length})</button>
       ${categories.map(c => `
         <button class="filter-chip ${currentCat === c.id ? 'active' : ''}" data-cat="${c.id}">${c.name}</button>
@@ -46,7 +47,7 @@ export default function WholesaleProductListingScreen(appEl, initialCat = 'all')
     </div>
 
     <!-- Product Grid Container -->
-    <div style="padding:16px; padding-bottom:120px" id="b2b-products-container"></div>
+    <div style="padding:16px" id="b2b-products-container"></div>
   `;
 
   function renderProducts() {
@@ -57,81 +58,96 @@ export default function WholesaleProductListingScreen(appEl, initialCat = 'all')
     }
 
     if (list.length === 0) {
-      container.innerHTML = `
-        <div style="text-align:center; padding:40px 20px; color:#64748b">
-          <div style="font-size:36px; margin-bottom:8px">🔍</div>
-          <div style="font-weight:700">No B2B products match your filter</div>
-          <div style="font-size:12px; margin-top:4px">Try selecting "All Ortho" or clearing your search</div>
-        </div>
-      `;
+      container.innerHTML = '';
+      container.appendChild(renderEmptyState({
+        icon: icons.search,
+        title: 'No B2B products match your criteria',
+        desc: 'Try changing the category or clearing your search keywords.',
+        ctaLabel: 'Show All Products',
+        ctaAction: () => {
+          currentCat = 'all';
+          currentSearch = '';
+          el.querySelector('#b2b-search').value = '';
+          el.querySelectorAll('.filter-chip').forEach(b => b.classList.toggle('active', b.dataset.cat === 'all'));
+          renderProducts();
+        }
+      }));
       return;
     }
 
     container.innerHTML = `
-      <div style="font-size:12px; color:#64748b; margin-bottom:12px; font-weight:600">
-        Showing ${list.length} certified products with wholesale tier rates
+      <div style="font-size:12px; color:var(--text-secondary); margin-bottom:12px; font-weight:600">
+        Showing ${list.length} certified products with wholesale volume tiers
       </div>
-      <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:16px">
+      <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:14px">
         ${list.map(p => {
           const tiers = p.bulkTiers || [];
-          const stockClass = p.stock > 30 ? 'in-stock' : (p.stock > 0 ? 'low-stock' : 'out-of-stock');
-          const stockLabel = p.stock > 30 ? `In Stock (${p.stock} units)` : (p.stock > 0 ? `Low Stock (${p.stock} units)` : 'Out of Stock');
+          const stockClass = p.stock > 30 ? 'status-active' : (p.stock > 0 ? 'status-pending' : 'status-inactive');
+          const stockLabel = p.stock > 30 ? `In Stock (${p.stock})` : (p.stock > 0 ? `Low Stock (${p.stock})` : 'Out of Stock');
+          const firstImg = (p.images && p.images[0]) || '';
 
           return `
-            <div class="wholesale-product-card" data-id="${p.id}">
-              <div style="display:flex; justify-content:space-between; align-items:flex-start">
-                <span class="moq-pill">MOQ: ${p.moq} Units</span>
-                <span class="stock-indicator ${stockClass}">● ${stockLabel}</span>
+            <div class="card wholesale-product-card" data-id="${p.id}" style="padding:14px; display:flex; flex-direction:column; gap:10px">
+              <div style="display:flex; justify-content:space-between; align-items:center">
+                <span class="status-pill status-shipped" style="font-size:10px; padding:2px 8px">MOQ: ${p.moq} Units</span>
+                <span class="status-pill ${stockClass}" style="font-size:10px; padding:2px 8px">
+                  <span class="status-pill-dot"></span>
+                  ${stockLabel}
+                </span>
               </div>
 
-              <div style="display:flex; gap:12px; align-items:center; margin:4px 0">
-                <div style="width:64px; height:64px; border-radius:10px; background:#f1f5f9; display:flex; align-items:center; justify-content:center; font-size:32px; flex-shrink:0">
-                  ${p.emoji || '🩺'}
+              <div style="display:flex; gap:12px; align-items:center">
+                <div style="width:56px; height:56px; border-radius:var(--radius-md); background:var(--bg-light); display:flex; align-items:center; justify-content:center; flex-shrink:0; border:1px solid var(--border); overflow:hidden">
+                  ${firstImg 
+                    ? `<img src="${firstImg}" alt="${p.name}" style="width:100%; height:100%; object-fit:cover" />` 
+                    : `<span style="width:24px;height:24px;color:var(--primary);display:inline-flex">${icons.knee}</span>`}
                 </div>
-                <div>
-                  <div style="font-size:11px; font-weight:700; color:#0d9488">${p.brand} • SKU: ${p.sku}</div>
-                  <h4 style="font-size:13px; font-weight:700; color:#0f172a; margin:2px 0 4px; line-height:1.3; cursor:pointer" class="b2b-prod-title" data-id="${p.id}">
+                <div style="flex:1; min-width:0">
+                  <div style="font-size:11px; font-weight:700; color:var(--primary)">${p.brand || 'OrthoCare Clinical'} • SKU: ${p.sku}</div>
+                  <h4 style="font-size:13px; font-weight:700; color:var(--text); margin:2px 0; line-height:1.3; cursor:pointer; overflow:hidden; text-overflow:ellipsis; white-space:nowrap" class="b2b-prod-title" data-id="${p.id}">
                     ${p.name}
                   </h4>
-                  <div style="font-size:11px; color:#64748b">${p.material}</div>
+                  <div style="font-size:11px; color:var(--text-secondary)">${p.material || 'Medical Grade Fabric'}</div>
                 </div>
               </div>
 
               <!-- Price Box -->
-              <div style="background:#f8fafc; border-radius:8px; padding:8px 10px; margin:4px 0">
+              <div style="background:var(--bg-light); border-radius:var(--radius-sm); padding:10px; border:1px solid var(--border)">
                 <div style="display:flex; justify-content:space-between; align-items:baseline">
                   <div>
-                    <span style="font-size:10px; color:#64748b; text-transform:uppercase; font-weight:700">Wholesale Starting Price</span>
-                    <div style="font-size:16px; font-weight:800; color:#0f172a">
-                      ${formatPrice(p.wholesalePrice)} <small style="font-size:11px; font-weight:500; color:#64748b">/ unit</small>
+                    <span style="font-size:10px; color:var(--text-secondary); text-transform:uppercase; font-weight:700">Wholesale Rate</span>
+                    <div style="font-size:15px; font-weight:800; color:var(--deep-navy)">
+                      ${formatPrice(p.wholesalePrice)} <small style="font-size:10px; font-weight:500; color:var(--text-secondary)">/ unit</small>
                     </div>
                   </div>
                   <div style="text-align:right">
-                    <span style="font-size:10px; color:#94a3b8">Retail MRP</span>
-                    <div style="font-size:12px; text-decoration:line-through; color:#94a3b8">${formatPrice(p.price)}</div>
+                    <span style="font-size:10px; color:var(--text-secondary)">Retail MRP</span>
+                    <div style="font-size:11px; text-decoration:line-through; color:var(--text-secondary)">${formatPrice(p.price)}</div>
                   </div>
                 </div>
 
                 <!-- Tier Pricing Badges -->
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-top:8px; font-size:11px">
-                  ${tiers.slice(0, 2).map(t => `
-                    <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:4px; padding:4px 6px">
-                      <div style="color:#64748b; font-size:10px">${t.label}</div>
-                      <div style="font-weight:700; color:#0d9488">${formatPrice(t.price)}/ea</div>
-                    </div>
-                  `).join('')}
-                </div>
+                ${tiers.length > 0 ? `
+                  <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-top:8px; font-size:11px">
+                    ${tiers.slice(0, 2).map(t => `
+                      <div style="background:var(--bg-white); border:1px solid var(--border); border-radius:var(--radius-sm); padding:4px 6px">
+                        <div style="color:var(--text-secondary); font-size:9px">${t.label}</div>
+                        <div style="font-weight:700; color:var(--primary)">${formatPrice(t.price)}/ea</div>
+                      </div>
+                    `).join('')}
+                  </div>
+                ` : ''}
               </div>
 
               <!-- Add to Wholesale Cart Quick Controls -->
-              <div style="display:flex; gap:8px; margin-top:6px">
-                <div style="display:flex; align-items:center; border:1px solid #cbd5e1; border-radius:8px; overflow:hidden">
-                  <button class="btn-step-qty" data-id="${p.id}" data-delta="-5" style="background:#f1f5f9; border:none; padding:6px 8px; font-weight:700; cursor:pointer">-</button>
-                  <input type="number" id="qty-input-${p.id}" value="${p.moq}" min="${p.moq}" style="width:44px; border:none; text-align:center; font-size:12px; font-weight:700">
-                  <button class="btn-step-qty" data-id="${p.id}" data-delta="5" style="background:#f1f5f9; border:none; padding:6px 8px; font-weight:700; cursor:pointer">+</button>
+              <div style="display:flex; gap:8px; align-items:center">
+                <div style="display:flex; align-items:center; border:1px solid var(--border); border-radius:var(--radius-sm); overflow:hidden; background:var(--bg-white)">
+                  <button class="btn-step-qty" data-id="${p.id}" data-delta="-5" style="background:var(--bg-light); border:none; padding:6px 10px; font-weight:700; cursor:pointer">−</button>
+                  <input type="number" id="qty-input-${p.id}" value="${p.moq}" min="${p.moq}" style="width:40px; border:none; text-align:center; font-size:12px; font-weight:700; outline:none">
+                  <button class="btn-step-qty" data-id="${p.id}" data-delta="5" style="background:var(--bg-light); border:none; padding:6px 10px; font-weight:700; cursor:pointer">+</button>
                 </div>
-                <button class="btn btn-primary btn-add-b2b" data-id="${p.id}" style="flex:1; padding:8px; font-size:12px; font-weight:700">
-                  + Add Bulk
+                <button class="btn btn-primary btn-sm btn-add-b2b" data-id="${p.id}" style="flex:1; height:34px; font-size:12px; font-weight:700">
+                  Add to Cart
                 </button>
               </div>
             </div>
@@ -140,10 +156,10 @@ export default function WholesaleProductListingScreen(appEl, initialCat = 'all')
       </div>
     `;
 
-    // Attach click events on rendered cards
-    container.querySelectorAll('.b2b-prod-title').forEach(el => {
-      el.addEventListener('click', () => {
-        navigate(`wholesale/product/${el.dataset.id}`);
+    // Click events
+    container.querySelectorAll('.b2b-prod-title').forEach(item => {
+      item.addEventListener('click', () => {
+        navigate(`wholesale/product/${item.dataset.id}`);
       });
     });
 
@@ -192,7 +208,13 @@ export default function WholesaleProductListingScreen(appEl, initialCat = 'all')
 
   renderProducts();
 
-  el.appendChild(renderWholesaleBottomNav('products'));
+  const nav = renderWholesaleBottomNav('products');
+  el.appendChild(nav);
   appEl.appendChild(el);
-  return el;
+
+  return { 
+    unmount() { 
+      if (nav._unsub) nav._unsub(); 
+    } 
+  };
 }

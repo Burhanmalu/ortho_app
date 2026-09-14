@@ -5,7 +5,7 @@ import { navigate } from '../router.js';
 import { icons } from '../data/icons.js';
 import { searchProducts, formatPrice } from '../data/products.js';
 import * as store from '../store.js';
-import { renderProductCard, renderBottomNav } from '../components/index.js';
+import { renderProductCard, renderBottomNav, renderEmptyState } from '../components/index.js';
 
 export default function SearchScreen(appEl) {
   const el = document.createElement('div');
@@ -72,14 +72,14 @@ export default function SearchScreen(appEl) {
 
     const results = searchProducts(query);
     if (results.length === 0) {
-      content.innerHTML = `
-        <div style="padding:var(--sp-4xl) var(--sp-2xl);text-align:center">
-          <div style="font-size:48px;margin-bottom:var(--sp-lg);opacity:0.4">🔍</div>
-          <h3 style="font-size:var(--fs-lg);margin-bottom:var(--sp-sm)">No results for "${query}"</h3>
-          <p style="color:var(--color-text-secondary);font-size:var(--fs-md);margin-bottom:var(--sp-xl)">We couldn't find a product matching your search.</p>
-          <button class="btn btn-primary btn-pill" onclick="location.hash='#/categories'">Browse Categories</button>
-        </div>
-      `;
+      content.innerHTML = '';
+      content.appendChild(renderEmptyState({
+        icon: icons.search,
+        title: `No results for "${query}"`,
+        desc: 'We couldn’t find products matching your search terms. Try searching for knee, lumbar, or cervical.',
+        ctaLabel: 'Browse All Categories',
+        ctaAction: () => navigate('categories')
+      }));
       return;
     }
 

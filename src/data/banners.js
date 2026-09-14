@@ -1,5 +1,5 @@
 // ========================================
-// Banner & Promotional Data
+// Banner & Promotional Data — Clean SVG Keys
 // ========================================
 
 export const banners = [
@@ -40,42 +40,42 @@ export const banners = [
 
 export const notifications = [
   {
-    id: 1, type: 'order', icon: '📦',
+    id: 1, type: 'order', iconKey: 'package',
     title: 'Order Shipped!',
     text: 'Your order #OR48291 has been shipped and is on its way.',
     time: '2 min ago', unread: true,
-    iconBg: '#E3F2F7',
-  },
-  {
-    id: 2, type: 'offer', icon: '🏷️',
-    title: '20% Off Knee Supports',
-    text: 'Use code ORTHO20 to get 20% off on selected knee supports.',
-    time: '1 hour ago', unread: true,
     iconBg: '#E8F7EF',
   },
   {
-    id: 3, type: 'delivery', icon: '🚚',
+    id: 2, type: 'offer', iconKey: 'tag',
+    title: '20% Off Knee Supports',
+    text: 'Use code ORTHO20 to get 20% off on selected knee supports.',
+    time: '1 hour ago', unread: true,
+    iconBg: '#E3F2F7',
+  },
+  {
+    id: 3, type: 'delivery', iconKey: 'truck',
     title: 'Arriving Tomorrow',
     text: 'Your Lumbar Back Support Belt will arrive by tomorrow.',
     time: '3 hours ago', unread: false,
-    iconBg: '#F0E8F7',
+    iconBg: '#EFF6FF',
   },
   {
-    id: 4, type: 'product', icon: '💙',
+    id: 4, type: 'product', iconKey: 'heart',
     title: 'Back in Stock!',
     text: 'Hinged Knee Stabilizer Pro from your wishlist is back in stock.',
     time: 'Yesterday', unread: false,
-    iconBg: '#F7EDE3',
+    iconBg: '#F0E8F7',
   },
   {
-    id: 5, type: 'offer', icon: '⚡',
-    title: 'Flash Sale Starting!',
-    text: 'Up to 40% off on selected orthopedic supports. Hurry!',
+    id: 5, type: 'offer', iconKey: 'repeat',
+    title: 'Seasonal Support Essentials',
+    text: 'Up to 25% off on selected orthopedic supports and braces.',
     time: 'Yesterday', unread: false,
-    iconBg: '#FDE8E5',
+    iconBg: '#FFF8E6',
   },
   {
-    id: 6, type: 'order', icon: '✅',
+    id: 6, type: 'order', iconKey: 'checkCircle',
     title: 'Order Delivered',
     text: 'Your order #OR47823 has been delivered successfully.',
     time: '2 days ago', unread: false,
@@ -91,9 +91,9 @@ export const coupons = [
 ];
 
 export const bankOffers = [
-  { bank: 'HDFC Bank', offer: '10% instant discount on HDFC credit cards', icon: '🏦' },
-  { bank: 'SBI Cards', offer: '5% cashback on SBI debit cards', icon: '💳' },
-  { bank: 'Paytm UPI', offer: 'Flat ₹50 cashback on first Paytm UPI payment', icon: '📱' },
+  { bank: 'HDFC Bank', offer: '10% instant discount on HDFC credit cards', iconKey: 'creditCard' },
+  { bank: 'SBI Cards', offer: '5% cashback on SBI debit cards', iconKey: 'creditCard' },
+  { bank: 'Paytm UPI', offer: 'Flat ₹50 cashback on first UPI payment', iconKey: 'phone' },
 ];
 
 export const addresses = [
@@ -116,8 +116,8 @@ export const addresses = [
 ];
 
 export const paymentMethods = [
-  { id: 'upi', label: 'UPI', desc: 'Google Pay, PhonePe, Paytm', icon: '📱' },
-  { id: 'card', label: 'Credit / Debit Card', desc: 'Visa, Mastercard, RuPay', icon: '💳' },
-  { id: 'netbanking', label: 'Net Banking', desc: 'All major banks', icon: '🏦' },
-  { id: 'cod', label: 'Cash on Delivery', desc: 'Pay when you receive', icon: '💵' },
+  { id: 'upi', label: 'UPI Instant Pay', desc: 'Google Pay, PhonePe, Paytm', iconKey: 'phone' },
+  { id: 'card', label: 'Credit / Debit Card', desc: 'Visa, Mastercard, RuPay', iconKey: 'creditCard' },
+  { id: 'netbanking', label: 'Net Banking', desc: 'All major medical partner banks', iconKey: 'building' },
+  { id: 'cod', label: 'Cash on Delivery', desc: 'Pay when you receive package', iconKey: 'package' },
 ];

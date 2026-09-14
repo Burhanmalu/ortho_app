@@ -1,169 +1,164 @@
 // ========================================
-// Wholesale B2B Cart Screen
+// Wholesale B2B Cart Screen - Redesigned
 // ========================================
 
 import { navigate } from '../../router.js';
 import * as store from '../../store.js';
 import { formatPrice } from '../../data/products.js';
-import { renderBackHeader, renderWholesaleBottomNav } from '../../components/index.js';
+import { icons } from '../../data/icons.js';
+import { renderBackHeader, renderWholesaleBottomNav, renderEmptyState } from '../../components/index.js';
 
 export default function WholesaleCartScreen(appEl) {
   const el = document.createElement('div');
   el.className = 'screen-content';
-  el.style.background = '#f8fafc';
+  el.style.background = 'var(--bg-light)';
+  el.style.paddingBottom = '110px';
 
-  el.appendChild(renderBackHeader('Wholesale Bulk Cart', () => navigate('wholesale/dashboard')));
+  let nav = null;
 
   function renderCart() {
+    el.innerHTML = '';
+    el.appendChild(renderBackHeader('Wholesale Bulk Cart', () => navigate('wholesale/dashboard')));
+
     const summary = store.getWholesaleCartSummary();
     const items = summary.itemDetails || [];
 
     const contentContainer = document.createElement('div');
-    contentContainer.style.paddingBottom = '130px';
+    contentContainer.style.padding = '16px';
     contentContainer.style.maxWidth = '720px';
     contentContainer.style.margin = '0 auto';
 
     if (items.length === 0) {
-      contentContainer.innerHTML = `
-        <div style="text-align:center; padding:60px 20px; color:#64748b">
-          <div style="font-size:48px; margin-bottom:12px">🛒</div>
-          <h3 style="font-size:18px; font-weight:700; color:#0f172a">Your Wholesale Cart is Empty</h3>
-          <p style="font-size:13px; margin:6px 0 20px">Add institutional cartons from the catalog or use the Matrix Pad.</p>
-          <div style="display:flex; justify-content:center; gap:12px">
-            <button id="btn-empty-catalog" class="btn btn-primary btn-pill" style="padding:10px 20px">Browse Catalog</button>
-            <button id="btn-empty-matrix" class="btn btn-secondary btn-pill" style="padding:10px 20px">Open Bulk Pad</button>
-          </div>
-        </div>
-      `;
+      contentContainer.appendChild(renderEmptyState({
+        icon: icons.cart,
+        title: 'Your Wholesale Cart is Empty',
+        desc: 'Add institutional cartons from the catalog or build purchase orders using the Matrix Pad.',
+        ctaLabel: 'Browse B2B Catalog',
+        ctaAction: () => navigate('wholesale/products')
+      }));
       el.appendChild(contentContainer);
-      el.appendChild(renderWholesaleBottomNav('cart'));
-      appEl.appendChild(el);
-
-      contentContainer.querySelector('#btn-empty-catalog')?.addEventListener('click', () => navigate('wholesale/products'));
-      contentContainer.querySelector('#btn-empty-matrix')?.addEventListener('click', () => navigate('wholesale/bulk-order'));
+      nav = renderWholesaleBottomNav('cart');
+      el.appendChild(nav);
       return;
     }
 
     contentContainer.innerHTML = `
       <!-- MOQ Warning Notice if applicable -->
       ${summary.hasMoqViolation ? `
-        <div class="moq-warning-banner">
-          <div>
-            ⚠️ <strong>MOQ Violation:</strong> One or more items are below clinical minimum order quantity.
+        <div class="card" style="padding:12px 14px; margin-bottom:14px; background:rgba(232, 93, 74, 0.08); border:1px solid rgba(232, 93, 74, 0.25); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px">
+          <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--danger);font-weight:600">
+            <span style="width:16px;height:16px;display:inline-flex">${icons.alertTriangle || icons.info}</span>
+            One or more items are below clinical minimum order quantity (MOQ).
           </div>
-          <button id="btn-auto-fix-moq" class="moq-fix-btn">Fix All to MOQ</button>
+          <button id="btn-auto-fix-moq" class="btn btn-danger btn-sm" style="font-size:11px;padding:4px 10px">Fix All to MOQ</button>
         </div>
       ` : ''}
 
-      <!-- Cart Item List -->
-      <div style="padding:16px 20px; display:flex; flex-direction:column; gap:14px">
-        <div style="display:flex; justify-content:space-between; align-items:center">
-          <span style="font-size:13px; font-weight:700; color:#475569">${summary.totalUnits} Total Units Across ${items.length} Products</span>
-          <button id="btn-clear-cart" style="background:none; border:none; color:#dc2626; font-size:12px; font-weight:700; cursor:pointer">Clear Cart</button>
-        </div>
+      <!-- Cart Header & Items -->
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px">
+        <span style="font-size:13px; font-weight:700; color:var(--text-secondary)">${summary.totalUnits} Units Across ${items.length} Products</span>
+        <button id="btn-clear-cart" style="background:none; border:none; color:var(--danger); font-size:12px; font-weight:600; cursor:pointer">Clear Cart</button>
+      </div>
 
+      <div style="display:flex; flex-direction:column; gap:12px; margin-bottom:16px">
         ${items.map(it => `
-          <div class="card" style="padding:16px; border-radius:12px; border:${it.isBelowMoq ? '2px solid #ea580c' : '1px solid #e2e8f0'}">
-            <div style="display:flex; gap:14px; align-items:flex-start">
-              <div style="width:54px; height:54px; border-radius:10px; background:#f1f5f9; display:flex; align-items:center; justify-content:center; font-size:28px; flex-shrink:0">
-                ${it.product.emoji || '🩺'}
+          <div class="card" style="padding:14px; border:${it.isBelowMoq ? '1.5px solid var(--danger)' : '1px solid var(--border)'}">
+            <div style="display:flex; gap:12px; align-items:flex-start">
+              <div style="width:50px; height:50px; border-radius:var(--radius-md); background:var(--bg-light); display:flex; align-items:center; justify-content:center; flex-shrink:0; border:1px solid var(--border)">
+                <span style="width:24px;height:24px;color:var(--primary);display:inline-flex">${icons.knee}</span>
               </div>
 
-              <div style="flex:1">
+              <div style="flex:1; min-width:0">
                 <div style="display:flex; justify-content:space-between; align-items:flex-start">
                   <div>
-                    <div style="font-size:11px; font-weight:700; color:#0d9488">${it.product.brand} • ${it.product.sku}</div>
-                    <h4 style="font-size:14px; font-weight:700; color:#0f172a; margin:2px 0">${it.product.name}</h4>
-                    <div style="font-size:11px; color:#64748b">Size: <strong>${it.size}</strong> • Carton Pack: <strong>${it.product.cartonQty || 25} Units</strong></div>
+                    <div style="font-size:11px; font-weight:700; color:var(--primary)">${it.product.brand || 'OrthoCare Clinical'} • ${it.product.sku}</div>
+                    <h4 style="font-size:13px; font-weight:700; color:var(--text); margin:2px 0; line-height:1.3">${it.product.name}</h4>
+                    <div style="font-size:11px; color:var(--text-secondary)">Size: <strong>${it.size}</strong> • Carton Pack: <strong>${it.product.cartonQty || 25} Units</strong></div>
                   </div>
-                  <button class="btn-remove-item" data-id="${it.productId}" data-size="${it.size}" style="background:none; border:none; color:#94a3b8; font-size:18px; cursor:pointer">×</button>
+                  <button class="btn-remove-item" data-id="${it.productId}" data-size="${it.size}" style="background:none; border:none; color:var(--text-secondary); font-size:18px; line-height:1; cursor:pointer; padding:0 4px">×</button>
                 </div>
 
                 ${it.isBelowMoq ? `
-                  <div style="color:#c2410c; font-size:11px; font-weight:700; margin:6px 0">
-                    ⚠️ Quantity (${it.qty}) is below MOQ (${it.product.moq} units).
+                  <div style="color:var(--danger); font-size:11px; font-weight:600; margin:4px 0">
+                    Quantity (${it.qty}) is below MOQ (${it.product.moq} units).
                   </div>
                 ` : ''}
 
                 <!-- Quantity and Rate Row -->
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px; padding-top:8px; border-top:1px solid #f1f5f9">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px; padding-top:8px; border-top:1px solid var(--border)">
                   <div style="display:flex; align-items:center; gap:6px">
-                    <button class="btn-cart-qty" data-id="${it.productId}" data-size="${it.size}" data-delta="-5" style="width:30px; height:30px; border-radius:6px; border:1px solid #cbd5e1; background:#ffffff; font-weight:700; cursor:pointer">-</button>
-                    <span style="font-size:14px; font-weight:800; min-width:40px; text-align:center">${it.qty}</span>
-                    <button class="btn-cart-qty" data-id="${it.productId}" data-size="${it.size}" data-delta="5" style="width:30px; height:30px; border-radius:6px; border:1px solid #cbd5e1; background:#ffffff; font-weight:700; cursor:pointer">+</button>
-                    <span style="font-size:11px; color:#64748b; margin-left:4px">@ ${formatPrice(it.unitPrice)}/ea</span>
+                    <button class="btn-cart-qty" data-id="${it.productId}" data-size="${it.size}" data-delta="-5" style="width:28px; height:28px; border-radius:var(--radius-sm); border:1px solid var(--border); background:var(--bg-white); font-weight:700; cursor:pointer">−</button>
+                    <span style="font-size:13px; font-weight:700; min-width:36px; text-align:center">${it.qty}</span>
+                    <button class="btn-cart-qty" data-id="${it.productId}" data-size="${it.size}" data-delta="5" style="width:28px; height:28px; border-radius:var(--radius-sm); border:1px solid var(--border); background:var(--bg-white); font-weight:700; cursor:pointer">+</button>
+                    <span style="font-size:11px; color:var(--text-secondary); margin-left:4px">@ ${formatPrice(it.unitPrice)}/ea</span>
                   </div>
 
                   <div style="text-align:right">
-                    <div style="font-size:15px; font-weight:800; color:#0f172a">${formatPrice(it.itemTotal)}</div>
-                    <div style="font-size:10px; color:#16a34a; font-weight:600">Saved ${formatPrice(it.savings)}</div>
+                    <div style="font-size:14px; font-weight:700; color:var(--deep-navy)">${formatPrice(it.itemTotal)}</div>
+                    <div style="font-size:10px; color:var(--success); font-weight:600">Saved ${formatPrice(it.savings)}</div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         `).join('')}
+      </div>
 
-        <!-- Price Breakdown Card -->
-        <div class="card" style="padding:18px; border-radius:14px; margin-top:6px">
-          <h3 style="font-size:14px; font-weight:700; color:#0f3647; margin-bottom:12px">B2B Financial Summary</h3>
+      <!-- Financial Summary Card -->
+      <div class="card" style="padding:16px; margin-bottom:16px">
+        <h3 style="font-size:13px; font-weight:700; color:var(--deep-navy); margin-bottom:12px; text-transform:uppercase; letter-spacing:0.5px">B2B Financial Summary</h3>
 
-          <div style="display:flex; flex-direction:column; gap:8px; font-size:13px">
-            <div style="display:flex; justify-content:space-between; color:#64748b">
-              <span>Standard Retail Value:</span>
-              <span style="text-decoration:line-through">${formatPrice(summary.retailTotal)}</span>
+        <div style="display:flex; flex-direction:column; gap:8px; font-size:12px">
+          <div style="display:flex; justify-content:space-between; color:var(--text-secondary)">
+            <span>Standard Retail Value:</span>
+            <span style="text-decoration:line-through">${formatPrice(summary.retailTotal)}</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; color:var(--success); font-weight:600">
+            <span>Wholesale Bulk Margin Savings:</span>
+            <span>− ${formatPrice(summary.overallSavings)}</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; color:var(--text)">
+            <span>Wholesale Base Subtotal:</span>
+            <span style="font-weight:700">${formatPrice(summary.subtotal)}</span>
+          </div>
+          ${summary.tierRebate > 0 ? `
+            <div style="display:flex; justify-content:space-between; color:var(--primary); font-weight:600">
+              <span>Account Tier Discount (${summary.tierDiscountPercent}%):</span>
+              <span>− ${formatPrice(summary.tierRebate)}</span>
             </div>
-            <div style="display:flex; justify-content:space-between; color:#16a34a; font-weight:600">
-              <span>Wholesale Bulk Margin Savings:</span>
-              <span>- ${formatPrice(summary.overallSavings)}</span>
-            </div>
-            <div style="display:flex; justify-content:space-between; color:#475569">
-              <span>Wholesale Base Subtotal:</span>
-              <span style="font-weight:700">${formatPrice(summary.subtotal)}</span>
-            </div>
-            ${summary.tierRebate > 0 ? `
-              <div style="display:flex; justify-content:space-between; color:#2563eb; font-weight:600">
-                <span>Account Tier Discount (${summary.tierDiscountPercent}%):</span>
-                <span>- ${formatPrice(summary.tierRebate)}</span>
-              </div>
-            ` : ''}
-            <div style="display:flex; justify-content:space-between; color:#475569">
-              <span>GST (18% Pass-Through):</span>
-              <span style="font-weight:700">${formatPrice(summary.gstAmount)}</span>
-            </div>
-            <div style="display:flex; justify-content:space-between; color:#475569">
-              <span>Heavy Logistics Freight:</span>
-              <span style="font-weight:700; color:${summary.shipping === 0 ? '#16a34a' : '#0f172a'}">
-                ${summary.shipping === 0 ? 'FREE B2B FREIGHT' : formatPrice(summary.shipping)}
-              </span>
-            </div>
-            <div style="border-top:2px solid #0f3647; padding-top:10px; margin-top:4px; display:flex; justify-content:space-between; align-items:baseline">
-              <span style="font-size:15px; font-weight:800; color:#0f3647">Net Invoice Total:</span>
-              <span style="font-size:20px; font-weight:900; color:#0f3647">${formatPrice(summary.finalTotal)}</span>
-            </div>
+          ` : ''}
+          <div style="display:flex; justify-content:space-between; color:var(--text)">
+            <span>GST (18% Pass-Through ITC):</span>
+            <span style="font-weight:700">${formatPrice(summary.gstAmount)}</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; color:var(--text)">
+            <span>Heavy Logistics Freight:</span>
+            <span style="font-weight:700; color:${summary.shipping === 0 ? 'var(--success)' : 'var(--text)'}">
+              ${summary.shipping === 0 ? 'FREE B2B FREIGHT' : formatPrice(summary.shipping)}
+            </span>
+          </div>
+          <div style="border-top:1px solid var(--border); padding-top:10px; margin-top:4px; display:flex; justify-content:space-between; align-items:baseline">
+            <span style="font-size:14px; font-weight:700; color:var(--deep-navy)">Net Invoice Total:</span>
+            <span style="font-size:18px; font-weight:800; color:var(--primary)">${formatPrice(summary.finalTotal)}</span>
           </div>
         </div>
-
-        <!-- Checkout Button -->
-        <button id="btn-proceed-checkout" class="btn btn-primary btn-pill" style="padding:14px; font-size:15px; font-weight:800; margin-top:8px" ${summary.hasMoqViolation ? 'disabled' : ''}>
-          ${summary.hasMoqViolation ? 'Fix MOQ Violations to Proceed' : 'Proceed to Wholesale Checkout →'}
-        </button>
       </div>
+
+      <!-- Checkout Button -->
+      <button id="btn-proceed-checkout" class="btn btn-primary btn-block" style="height:46px; font-size:14px; font-weight:700" ${summary.hasMoqViolation ? 'disabled' : ''}>
+        ${summary.hasMoqViolation ? 'Adjust Quantities to Meet MOQ' : 'Proceed to Wholesale Checkout'}
+      </button>
     `;
 
-    // Attach Event Listeners
+    // Event handlers
     contentContainer.querySelector('#btn-clear-cart')?.addEventListener('click', () => {
       store.clearWholesaleCart();
-      el.innerHTML = '';
-      el.appendChild(renderBackHeader('Wholesale Bulk Cart', () => navigate('wholesale/dashboard')));
       renderCart();
     });
 
     contentContainer.querySelectorAll('.btn-remove-item').forEach(btn => {
       btn.addEventListener('click', () => {
         store.removeFromWholesaleCart(btn.dataset.id, btn.dataset.size);
-        el.innerHTML = '';
-        el.appendChild(renderBackHeader('Wholesale Bulk Cart', () => navigate('wholesale/dashboard')));
         renderCart();
       });
     });
@@ -175,10 +170,7 @@ export default function WholesaleCartScreen(appEl) {
         const delta = Number(btn.dataset.delta);
         const item = items.find(it => it.productId === id && it.size === sz);
         if (item) {
-          const newQty = item.qty + delta;
-          store.updateWholesaleCartQty(id, sz, newQty);
-          el.innerHTML = '';
-          el.appendChild(renderBackHeader('Wholesale Bulk Cart', () => navigate('wholesale/dashboard')));
+          store.updateWholesaleCartQty(id, sz, item.qty + delta);
           renderCart();
         }
       });
@@ -190,10 +182,8 @@ export default function WholesaleCartScreen(appEl) {
           store.updateWholesaleCartQty(it.productId, it.size, it.product.moq);
         }
       });
-      el.innerHTML = '';
-      el.appendChild(renderBackHeader('Wholesale Bulk Cart', () => navigate('wholesale/dashboard')));
       renderCart();
-      store.emitter.emit('toast', { message: 'All items adjusted to MOQ', type: 'success' });
+      store.emit('toast', { message: 'All items adjusted to meet MOQ', type: 'success' });
     });
 
     contentContainer.querySelector('#btn-proceed-checkout')?.addEventListener('click', () => {
@@ -203,10 +193,16 @@ export default function WholesaleCartScreen(appEl) {
     });
 
     el.appendChild(contentContainer);
-    el.appendChild(renderWholesaleBottomNav('cart'));
-    appEl.appendChild(el);
+    nav = renderWholesaleBottomNav('cart');
+    el.appendChild(nav);
   }
 
   renderCart();
-  return el;
+  appEl.appendChild(el);
+
+  return { 
+    unmount() { 
+      if (nav && nav._unsub) nav._unsub(); 
+    } 
+  };
 }

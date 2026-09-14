@@ -1,20 +1,20 @@
 // ========================================
-// Wholesale Bulk Order Matrix Pad Screen
+// Wholesale Bulk Order Matrix Pad Screen - Redesigned
 // ========================================
 
 import { navigate } from '../../router.js';
 import * as store from '../../store.js';
 import { products, formatPrice, getWholesaleTierPrice } from '../../data/products.js';
+import { icons } from '../../data/icons.js';
 import { renderBackHeader, renderWholesaleBottomNav } from '../../components/index.js';
 
 export default function WholesaleBulkOrderScreen(appEl) {
   const el = document.createElement('div');
   el.className = 'screen-content';
-  el.style.background = '#f8fafc';
+  el.style.background = 'var(--bg-light)';
+  el.style.paddingBottom = '160px'; // Space for sticky matrix summary & bottom nav
 
-  // State of matrix: map of productId -> quantity (default 0 or pre-filled for popular items)
   const orderPad = {};
-  // Pre-fill a few sample items to give a rich experience immediately
   const samplePicks = ['OC0001', 'OC0013', 'OC0025', 'OC0037', 'OC0085'];
   products.slice(0, 15).forEach(p => {
     if (samplePicks.includes(p.id)) {
@@ -26,60 +26,64 @@ export default function WholesaleBulkOrderScreen(appEl) {
 
   el.appendChild(renderBackHeader('Quick Bulk Order Matrix', () => navigate('wholesale/dashboard')));
 
-  el.innerHTML += `
-    <div style="padding-bottom:130px">
-      <!-- Instruction Banner -->
-      <div style="background:#0f3647; color:#ffffff; padding:14px 20px">
-        <h2 style="font-size:16px; font-weight:800; margin:0 0 4px">Matrix Order Pad for Clinics & Pharmacies</h2>
-        <p style="font-size:12px; opacity:0.85; margin:0">
-          Enter quantities for multiple orthopedic items simultaneously. Volume tier rates and 18% GST compute automatically.
-        </p>
-      </div>
+  const container = document.createElement('div');
+  container.style.maxWidth = '800px';
+  container.style.margin = '0 auto';
 
-      <!-- Quick Action Toolbar -->
-      <div style="padding:10px 16px; display:flex; justify-content:space-between; align-items:center; background:#ffffff; border-bottom:1px solid #e2e8f0">
-        <span style="font-size:12px; font-weight:700; color:#475569">15 Fast-Moving Items</span>
-        <button id="btn-clear-matrix" style="background:none; border:none; color:#dc2626; font-size:11px; font-weight:700; cursor:pointer">
-          ✕ Clear Quantities
-        </button>
-      </div>
+  container.innerHTML = `
+    <!-- Instruction Banner -->
+    <div style="background:var(--deep-navy); color:var(--text-white); padding:16px 20px">
+      <h2 style="font-size:15px; font-weight:700; margin:0 0 4px">Matrix Order Pad for Clinics & Pharmacies</h2>
+      <p style="font-size:12px; color:var(--border); margin:0; line-height:1.4">
+        Enter quantities for multiple orthopedic items simultaneously. Volume tier rates and 18% GST compute automatically.
+      </p>
+    </div>
 
-      <!-- Bulk Table Matrix -->
-      <div class="bulk-matrix-table-container">
-        <table class="bulk-matrix-table">
-          <thead>
-            <tr>
-              <th style="width:40px">#</th>
-              <th>Product Description</th>
-              <th>SKU / MOQ</th>
-              <th style="text-align:center">Qty (Units)</th>
-              <th style="text-align:right">Tier Rate</th>
-              <th style="text-align:right">Amount</th>
-            </tr>
-          </thead>
-          <tbody id="matrix-tbody"></tbody>
-        </table>
-      </div>
+    <!-- Quick Action Toolbar -->
+    <div style="padding:12px 16px; display:flex; justify-content:space-between; align-items:center; background:var(--bg-white); border-bottom:1px solid var(--border)">
+      <span style="font-size:12px; font-weight:700; color:var(--text-secondary)">15 Fast-Moving Clinical Items</span>
+      <button id="btn-clear-matrix" style="background:none; border:none; color:var(--danger); font-size:11px; font-weight:600; cursor:pointer">
+        Clear Quantities
+      </button>
+    </div>
 
-      <!-- Sticky Matrix Bottom Summary Bar -->
-      <div style="position:fixed; bottom:55px; left:0; right:0; background:#ffffff; border-top:2px solid #0f3647; padding:12px 20px; z-index:100; box-shadow:0 -4px 16px rgba(0,0,0,0.06); max-width:800px; margin:0 auto">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; font-size:12px">
-          <div>
-            <span style="color:#64748b">Total Items: <strong id="sum-items-count" style="color:#0f172a">0</strong></span> • 
-            <span style="color:#64748b">Total Units: <strong id="sum-units-count" style="color:#0f172a">0</strong></span>
-          </div>
-          <div style="text-align:right">
-            <span style="color:#64748b">Net Payable (Inc. 18% GST):</span>
-            <div style="font-size:18px; font-weight:800; color:#0f3647" id="sum-grand-total">₹0</div>
-          </div>
+    <!-- Bulk Table Matrix -->
+    <div class="bulk-matrix-table-container" style="background:var(--bg-white); overflow-x:auto; -webkit-overflow-scrolling:touch">
+      <table class="bulk-matrix-table" style="width:100%; border-collapse:collapse; font-size:12px">
+        <thead>
+          <tr style="background:var(--bg-light); border-bottom:1px solid var(--border); text-align:left">
+            <th style="padding:10px 12px; width:36px; color:var(--text-secondary)">#</th>
+            <th style="padding:10px 12px; color:var(--text)">Item Description</th>
+            <th style="padding:10px 12px; color:var(--text)">SKU / MOQ</th>
+            <th style="padding:10px 12px; text-align:center; color:var(--text)">Qty</th>
+            <th style="padding:10px 12px; text-align:right; color:var(--text)">Tier Rate</th>
+            <th style="padding:10px 12px; text-align:right; color:var(--text)">Total</th>
+          </tr>
+        </thead>
+        <tbody id="matrix-tbody"></tbody>
+      </table>
+    </div>
+
+    <!-- Sticky Matrix Bottom Summary Bar -->
+    <div style="position:fixed; bottom:var(--bottom-nav-height); left:0; right:0; background:var(--bg-white); border-top:1px solid var(--border); padding:12px 16px; z-index:45; box-shadow:var(--shadow-lg); max-width:800px; margin:0 auto">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; font-size:12px">
+        <div>
+          <span style="color:var(--text-secondary)">Items: <strong id="sum-items-count" style="color:var(--text)">0</strong></span> • 
+          <span style="color:var(--text-secondary)">Units: <strong id="sum-units-count" style="color:var(--text)">0</strong></span>
         </div>
-
-        <button id="btn-submit-bulk-order" class="btn btn-primary btn-pill" style="width:100%; padding:12px; font-weight:800; font-size:14px">
-          Proceed to Wholesale Checkout →
-        </button>
+        <div style="text-align:right">
+          <span style="font-size:11px; color:var(--text-secondary)">Total (Inc. 18% GST):</span>
+          <div style="font-size:16px; font-weight:800; color:var(--primary)" id="sum-grand-total">₹0</div>
+        </div>
       </div>
+
+      <button id="btn-submit-bulk-order" class="btn btn-primary btn-block" style="height:44px; font-weight:700; font-size:14px">
+        Proceed to Wholesale Checkout
+      </button>
     </div>
   `;
+
+  el.appendChild(container);
 
   function renderTableRows() {
     const tbody = el.querySelector('#matrix-tbody');
@@ -90,37 +94,36 @@ export default function WholesaleBulkOrderScreen(appEl) {
       const isSelected = q > 0;
 
       return `
-        <tr style="background:${isSelected ? '#f0fdf4' : 'transparent'}">
-          <td>${idx + 1}</td>
-          <td>
-            <div style="font-weight:700; color:#0f172a">${p.name}</div>
-            <div style="font-size:11px; color:#64748b">${p.material}</div>
+        <tr style="background:${isSelected ? 'rgba(57, 169, 107, 0.06)' : 'transparent'}; border-bottom:1px solid var(--border)">
+          <td style="padding:10px 12px; color:var(--text-secondary)">${idx + 1}</td>
+          <td style="padding:10px 12px">
+            <div style="font-weight:700; color:var(--text)">${p.name}</div>
+            <div style="font-size:11px; color:var(--text-secondary); margin-top:2px">${p.categoryName || 'Support'}</div>
           </td>
-          <td>
-            <span style="font-weight:600">${p.sku}</span><br>
-            <span style="font-size:11px; color:#2563eb">MOQ: ${p.moq}</span>
+          <td style="padding:10px 12px; white-space:nowrap">
+            <span style="font-weight:600; color:var(--text)">${p.sku}</span><br>
+            <span style="font-size:11px; color:var(--primary)">MOQ: ${p.moq}</span>
           </td>
-          <td style="text-align:center">
-            <input type="number" class="bulk-qty-input matrix-qty-input" data-id="${p.id}" data-moq="${p.moq}" value="${q}" min="0" step="5">
+          <td style="padding:10px 12px; text-align:center">
+            <input type="number" class="matrix-qty-input" data-id="${p.id}" data-moq="${p.moq}" value="${q}" min="0" step="5" style="width:64px; padding:6px; border:1px solid var(--border); border-radius:var(--radius-sm); text-align:center; font-weight:700; font-size:13px" />
           </td>
-          <td style="text-align:right; font-weight:600">
+          <td style="padding:10px 12px; text-align:right; font-weight:600; color:var(--text)">
             ${formatPrice(rate)}
           </td>
-          <td style="text-align:right; font-weight:800; color:${isSelected ? '#15803d' : '#94a3b8'}">
+          <td style="padding:10px 12px; text-align:right; font-weight:700; color:${isSelected ? 'var(--primary)' : 'var(--text-secondary)'}">
             ${formatPrice(rowTotal)}
           </td>
         </tr>
       `;
     }).join('');
 
-    // Attach listeners on inputs
     tbody.querySelectorAll('.matrix-qty-input').forEach(input => {
       input.addEventListener('change', (e) => {
         const id = input.dataset.id;
         const moq = Number(input.dataset.moq) || 10;
         let val = Number(e.target.value) || 0;
         if (val > 0 && val < moq) {
-          store.emitter.emit('toast', { message: `Minimum order for this item is ${moq} units`, type: 'info' });
+          store.emit('toast', { message: `Minimum order for this item is ${moq} units`, type: 'info' });
           val = moq;
           input.value = moq;
         }
@@ -153,19 +156,22 @@ export default function WholesaleBulkOrderScreen(appEl) {
     const shipping = subtotal > 15000 || totalUnits >= 25 ? 0 : 750;
     const grand = subtotal + gst + shipping;
 
-    el.querySelector('#sum-items-count').textContent = activeItems;
-    el.querySelector('#sum-units-count').textContent = totalUnits;
-    el.querySelector('#sum-grand-total').textContent = formatPrice(grand);
+    const itemsCountEl = el.querySelector('#sum-items-count');
+    const unitsCountEl = el.querySelector('#sum-units-count');
+    const grandTotalEl = el.querySelector('#sum-grand-total');
+
+    if (itemsCountEl) itemsCountEl.textContent = activeItems;
+    if (unitsCountEl) unitsCountEl.textContent = totalUnits;
+    if (grandTotalEl) grandTotalEl.textContent = formatPrice(grand);
   }
 
-  el.querySelector('#btn-clear-matrix').addEventListener('click', () => {
+  el.querySelector('#btn-clear-matrix')?.addEventListener('click', () => {
     Object.keys(orderPad).forEach(k => orderPad[k] = 0);
     renderTableRows();
     updateSummary();
   });
 
-  el.querySelector('#btn-submit-bulk-order').addEventListener('click', () => {
-    // Populate wholesale cart
+  el.querySelector('#btn-submit-bulk-order')?.addEventListener('click', () => {
     let addedCount = 0;
     store.clearWholesaleCart();
 
@@ -178,7 +184,7 @@ export default function WholesaleBulkOrderScreen(appEl) {
     });
 
     if (addedCount === 0) {
-      store.emitter.emit('toast', { message: 'Please enter quantity for at least one item', type: 'error' });
+      store.emit('toast', { message: 'Please enter quantity for at least one item', type: 'error' });
       return;
     }
 
@@ -188,7 +194,13 @@ export default function WholesaleBulkOrderScreen(appEl) {
   renderTableRows();
   updateSummary();
 
-  el.appendChild(renderWholesaleBottomNav('bulk-order'));
+  const nav = renderWholesaleBottomNav('bulk-order');
+  el.appendChild(nav);
   appEl.appendChild(el);
-  return el;
+
+  return { 
+    unmount() { 
+      if (nav._unsub) nav._unsub(); 
+    } 
+  };
 }

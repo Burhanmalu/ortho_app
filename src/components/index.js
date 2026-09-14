@@ -1,32 +1,45 @@
 // ========================================
 // OrthoCare — Reusable UI Components
+// Professional Healthcare Design System
 // ========================================
 
-import { icons, renderStars } from '../data/icons.js';
+import { icons, renderStars, renderIcon } from '../data/icons.js';
 import { formatPrice } from '../data/products.js';
 import * as store from '../store.js';
 import { navigate } from '../router.js';
 
 // ---- Toast System ----
 export function showToast(message, type = 'info', duration = 2500) {
-  const container = document.getElementById('toast-container');
+  let container = document.getElementById('toast-container');
+  if (!container) {
+    container = document.createElement('div');
+    container.id = 'toast-container';
+    document.body.appendChild(container);
+  }
+
   const toast = document.createElement('div');
-  toast.className = 'toast';
+  toast.className = `toast ${type}`;
+
+  let iconSvg = icons.info;
+  if (type === 'success') iconSvg = icons.checkCircle;
+  else if (type === 'error') iconSvg = icons.alertCircle;
+
   toast.innerHTML = `
-    <span class="toast-icon">${type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ'}</span>
+    <span style="display:flex;align-items:center">${iconSvg}</span>
     <span class="toast-msg">${message}</span>
   `;
   container.appendChild(toast);
+
   setTimeout(() => {
     toast.classList.add('removing');
-    setTimeout(() => toast.remove(), 200);
+    setTimeout(() => toast.remove(), 220);
   }, duration);
 }
 
-// Auto-listen for toast events
+// Auto-listen for store toast events
 store.on('toast', ({ message, type }) => showToast(message, type));
 
-// ---- Bottom Navigation ----
+// ---- Customer Bottom Navigation (5 Tabs) ----
 export function renderBottomNav(activeTab = 'home') {
   const cartCount = store.getCartCount();
   const tabs = [
@@ -56,7 +69,6 @@ export function renderBottomNav(activeTab = 'home') {
     });
   });
 
-  // Update cart badge when cart changes
   const unsub = store.on('cart:changed', () => {
     const badge = nav.querySelector('[data-tab="cart"] .badge-dot');
     const count = store.getCartCount();
@@ -73,184 +85,28 @@ export function renderBottomNav(activeTab = 'home') {
   return nav;
 }
 
-// ---- Back Header ----
-export function renderBackHeader(title, actions = '') {
-  const header = document.createElement('header');
-  header.className = 'back-header';
-  header.innerHTML = `
-    <button class="back-btn" id="back-btn">${icons.back}</button>
-    <h1 class="back-header-title">${title}</h1>
-    ${actions}
-  `;
-  header.querySelector('#back-btn').addEventListener('click', () => window.history.back());
-  return header;
-}
-
-// ---- Product Card ----
-export function renderProductCard(product, options = {}) {
-  const inWishlist = store.isInWishlist(product.id);
-  const card = document.createElement('div');
-  card.className = 'product-card animate-fade-in';
-  card.innerHTML = `
-    ${product.discount > 0 ? `<span class="product-card-discount">${product.discount}% OFF</span>` : ''}
-    <div class="product-card-wishlist">
-      <button class="wishlist-btn ${inWishlist ? 'active' : ''}" data-pid="${product.id}">
-        ${inWishlist ? icons.heartFilled : icons.heart}
-      </button>
-    </div>
-    <div class="product-card-img">
-      ${product.images && product.images.length > 0
-        ? `<img src="${product.images[0]}" alt="${product.name}" loading="lazy" />`
-        : `<div class="product-card-placeholder">${product.emoji || '🩹'}</div>`
-      }
-    </div>
-    <div class="product-card-info">
-      <div class="product-card-name">${product.name}</div>
-      <div class="product-card-rating">
-        <div class="rating">
-          ${renderStars(product.rating)}
-          <span class="rating-value">${product.rating}</span>
-          <span class="rating-count">(${product.reviews > 999 ? (product.reviews/1000).toFixed(1)+'k' : product.reviews})</span>
-        </div>
-      </div>
-      <div class="product-card-price price-group">
-        <span class="price-current">${formatPrice(product.price)}</span>
-        ${product.mrp > product.price ? `<span class="price-original">${formatPrice(product.mrp)}</span>` : ''}
-        ${product.discount > 0 ? `<span class="price-discount">${product.discount}% off</span>` : ''}
-      </div>
-      ${product.inStock ? '<div class="product-card-stock">✓ In Stock</div>' : '<div class="product-card-stock" style="color:var(--color-error)">Out of Stock</div>'}
-    </div>
-  `;
-
-  // Wishlist toggle
-  card.querySelector('.wishlist-btn').addEventListener('click', (e) => {
-    e.stopPropagation();
-    store.toggleWishlist(product.id);
-    const btn = card.querySelector('.wishlist-btn');
-    const isNowInWishlist = store.isInWishlist(product.id);
-    btn.classList.toggle('active', isNowInWishlist);
-    btn.innerHTML = isNowInWishlist ? icons.heartFilled : icons.heart;
-  });
-
-  // Navigate to product detail
-  card.addEventListener('click', () => {
-    navigate(`product/${product.id}`);
-  });
-
-  return card;
-}
-
-// ---- Product Carousel ----
-export function renderProductCarousel(products, title, link = '') {
-  const section = document.createElement('section');
-  section.className = 'section';
-  section.innerHTML = `
-    <div class="section-header">
-      <h2 class="section-title">${title}</h2>
-      ${link ? `<a href="${link}" class="section-link">View All →</a>` : ''}
-    </div>
-    <div class="product-carousel"></div>
-  `;
-  const carousel = section.querySelector('.product-carousel');
-  products.forEach(p => carousel.appendChild(renderProductCard(p)));
-  return section;
-}
-
-// ---- Empty State ----
-export function renderEmptyState(icon, title, text, ctaLabel, ctaAction) {
-  const el = document.createElement('div');
-  el.className = 'empty-state';
-  el.innerHTML = `
-    <div class="empty-state-icon">${icon}</div>
-    <h3 class="empty-state-title">${title}</h3>
-    <p class="empty-state-text">${text}</p>
-    ${ctaLabel ? `<button class="btn btn-primary btn-pill" id="empty-cta">${ctaLabel}</button>` : ''}
-  `;
-  if (ctaLabel && ctaAction) {
-    el.querySelector('#empty-cta').addEventListener('click', ctaAction);
-  }
-  return el;
-}
-
-// ---- Modal ----
-export function showModal(title, contentHtml, footerHtml = '') {
-  const container = document.getElementById('modal-container');
-  container.innerHTML = `
-    <div class="modal-backdrop" id="modal-backdrop"></div>
-    <div class="modal-sheet">
-      <div class="modal-handle"></div>
-      <div class="modal-header">
-        <h3 class="modal-title">${title}</h3>
-        <button class="back-btn" id="modal-close">${icons.close}</button>
-      </div>
-      <div class="modal-body">${contentHtml}</div>
-      ${footerHtml ? `<div class="modal-footer">${footerHtml}</div>` : ''}
-    </div>
-  `;
-  const close = () => {
-    container.querySelector('.modal-backdrop').classList.add('closing');
-    container.querySelector('.modal-sheet').classList.add('closing');
-    setTimeout(() => { container.innerHTML = ''; }, 300);
-  };
-  container.querySelector('#modal-backdrop').addEventListener('click', close);
-  container.querySelector('#modal-close').addEventListener('click', close);
-  return { close, container };
-}
-
-export function closeModal() {
-  const container = document.getElementById('modal-container');
-  const backdrop = container.querySelector('.modal-backdrop');
-  const sheet = container.querySelector('.modal-sheet');
-  if (backdrop) backdrop.classList.add('closing');
-  if (sheet) sheet.classList.add('closing');
-  setTimeout(() => { container.innerHTML = ''; }, 300);
-}
-
-// ---- Skeleton Loading Cards ----
-export function renderSkeletonGrid(count = 4) {
-  const grid = document.createElement('div');
-  grid.className = 'product-grid';
-  for (let i = 0; i < count; i++) {
-    grid.innerHTML += `
-      <div class="skeleton-card">
-        <div class="skeleton skeleton-img"></div>
-        <div style="padding:12px">
-          <div class="skeleton skeleton-text"></div>
-          <div class="skeleton skeleton-text short"></div>
-          <div class="skeleton skeleton-text" style="width:40%"></div>
-        </div>
-      </div>
-    `;
-  }
-  return grid;
-}
-
-// ========================================
-// Wholesale B2B Bottom Navigation
-// ========================================
-export function renderWholesaleBottomNav(activeTab = 'dashboard') {
+// ---- Wholesale B2B Bottom Navigation (Exactly 5 Tabs) ----
+export function renderWholesaleBottomNav(activeTab = 'home') {
   const wholesaleCart = store.getWholesaleCart();
   const totalUnits = wholesaleCart.reduce((s, c) => s + c.qty, 0);
 
   const tabs = [
-    { id: 'dashboard', label: 'Dashboard', icon: icons.home, route: 'wholesale/dashboard' },
-    { id: 'products', label: 'B2B Catalog', icon: icons.grid, route: 'wholesale/products' },
-    { id: 'bulk-order', label: 'Bulk Pad', icon: icons.clipboard || '📝', route: 'wholesale/bulk-order' },
+    { id: 'home', label: 'Home', icon: icons.home, route: 'wholesale/dashboard' },
+    { id: 'catalog', label: 'Catalog', icon: icons.grid, route: 'wholesale/products' },
+    { id: 'bulk', label: 'Bulk', icon: icons.bulk, route: 'wholesale/bulk-order' },
     { id: 'cart', label: 'Cart', icon: icons.cart, route: 'wholesale/cart', badge: totalUnits > 0 ? `${totalUnits}` : null },
-    { id: 'orders', label: 'B2B Orders', icon: icons.truck || '📦', route: 'wholesale/orders' },
-    { id: 'profile', label: 'Business', icon: icons.user, route: 'wholesale/profile' }
+    { id: 'business', label: 'Business', icon: icons.business, route: 'wholesale/profile' },
   ];
 
   const nav = document.createElement('nav');
   nav.className = 'bottom-nav b2b-nav';
-  nav.style.borderTop = '2px solid #0f3647';
   nav.innerHTML = tabs.map(tab => `
     <div class="bottom-nav-item ${tab.id === activeTab ? 'active' : ''}" data-route="${tab.route}">
-      <span class="bottom-nav-icon" style="position:relative">
+      <span class="bottom-nav-icon">
         ${tab.icon}
-        ${tab.badge ? `<span class="badge-dot" style="background:#0d9488">${tab.badge}</span>` : ''}
+        ${tab.badge ? `<span class="badge-dot">${tab.badge}</span>` : ''}
       </span>
-      <span class="bottom-nav-label" style="font-size:10px">${tab.label}</span>
+      <span class="bottom-nav-label">${tab.label}</span>
     </div>
   `).join('');
 
@@ -263,102 +119,289 @@ export function renderWholesaleBottomNav(activeTab = 'dashboard') {
   return nav;
 }
 
+// ---- Compact Back Header ----
+export function renderBackHeader(title, actions = '') {
+  const header = document.createElement('header');
+  header.className = 'back-header';
+  header.innerHTML = `
+    <button class="back-btn" id="back-btn" aria-label="Go Back">${icons.back}</button>
+    <h1 class="back-header-title">${title}</h1>
+    <div style="display:flex;align-items:center;gap:6px">${actions}</div>
+  `;
+  header.querySelector('#back-btn').addEventListener('click', () => window.history.back());
+  return header;
+}
+
+// ---- Product Card Component ----
+export function renderProductCard(product, options = {}) {
+  const inWishlist = store.isInWishlist(product.id);
+  const card = document.createElement('div');
+  card.className = 'product-card';
+  
+  const discountHtml = product.discount > 0 ? `<span class="product-card-discount">${product.discount}% OFF</span>` : '';
+  const firstImage = (product.images && product.images.length > 0) ? product.images[0] : '';
+
+  card.innerHTML = `
+    <div class="product-card-thumb">
+      ${discountHtml}
+      <div class="product-card-wishlist">
+        <button class="wishlist-btn ${inWishlist ? 'active' : ''}" data-pid="${product.id}" aria-label="Wishlist">
+          ${inWishlist ? icons.heartFilled : icons.heart}
+        </button>
+      </div>
+      ${firstImage 
+        ? `<img src="${firstImage}" alt="${product.name}" loading="lazy" />`
+        : `<div style="width:60px;height:60px;border-radius:12px;background:var(--primary-bg);display:flex;align-items:center;justify-content:center;color:var(--primary)">${icons.package}</div>`
+      }
+    </div>
+    <div class="product-card-body">
+      <div class="product-card-brand">OrthoCare ${product.category ? `• ${product.category}` : ''}</div>
+      <div class="product-card-title">${product.name}</div>
+      <div class="product-card-rating">
+        ${renderStars(product.rating || 4.5)}
+        <span>${product.rating || 4.5} (${product.reviews || 120})</span>
+      </div>
+      <div class="product-card-pricing">
+        <span class="product-card-price">${formatPrice(product.price)}</span>
+        ${product.mrp > product.price ? `<span class="product-card-mrp">${formatPrice(product.mrp)}</span>` : ''}
+      </div>
+    </div>
+  `;
+
+  // Wishlist toggle
+  card.querySelector('.wishlist-btn').addEventListener('click', (e) => {
+    e.stopPropagation();
+    store.toggleWishlist(product.id);
+    const btn = card.querySelector('.wishlist-btn');
+    const isNow = store.isInWishlist(product.id);
+    btn.classList.toggle('active', isNow);
+    btn.innerHTML = isNow ? icons.heartFilled : icons.heart;
+  });
+
+  // Navigate to product detail
+  card.addEventListener('click', () => {
+    navigate(`product/${product.id}`);
+  });
+
+  return card;
+}
+
+// ---- Product Carousel Section ----
+export function renderProductCarousel(products, title, link = '') {
+  const section = document.createElement('section');
+  section.style.marginBottom = '24px';
+  section.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:0 16px 12px">
+      <h2 style="font-size:17px;font-weight:700;color:var(--text);margin:0">${title}</h2>
+      ${link ? `<a href="${link}" style="font-size:12px;font-weight:600;color:var(--primary);display:flex;align-items:center;gap:4px">View All ${icons.chevronRight}</a>` : ''}
+    </div>
+    <div style="display:flex;gap:12px;overflow-x:auto;padding:0 16px 4px;-webkit-overflow-scrolling:touch" class="carousel-track"></div>
+  `;
+  const track = section.querySelector('.carousel-track');
+  products.forEach(p => {
+    const card = renderProductCard(p);
+    card.style.minWidth = '165px';
+    card.style.maxWidth = '165px';
+    track.appendChild(card);
+  });
+  return section;
+}
+
+// ---- Reusable Empty State ----
+export function renderEmptyState(arg1 = {}, arg2, arg3, arg4, arg5) {
+  let icon = icons.package;
+  let title = 'Nothing here yet';
+  let desc = 'Discover certified orthopedic supports crafted for everyday mobility.';
+  let ctaLabel = 'Browse Products';
+  let ctaAction = () => navigate('categories');
+
+  if (typeof arg1 === 'object' && arg1 !== null) {
+    if (arg1.icon) icon = icons[arg1.icon] || arg1.icon;
+    if (arg1.title) title = arg1.title;
+    if (arg1.desc !== undefined) desc = arg1.desc;
+    if (arg1.ctaLabel !== undefined) ctaLabel = arg1.ctaLabel;
+    if (arg1.ctaAction) ctaAction = arg1.ctaAction;
+  } else {
+    if (typeof arg1 === 'string') {
+      icon = icons[arg1] || (arg1.startsWith('<svg') ? arg1 : icons.package);
+    }
+    if (arg2) title = arg2;
+    if (arg3 !== undefined) desc = arg3;
+    if (arg4 !== undefined) ctaLabel = arg4;
+    if (arg5) ctaAction = arg5;
+  }
+
+  const el = document.createElement('div');
+  el.className = 'empty-state';
+  el.innerHTML = `
+    <div class="empty-state-icon">${icon}</div>
+    <div class="empty-state-title">${title}</div>
+    <p class="empty-state-desc">${desc}</p>
+    ${ctaLabel ? `<button class="btn btn-primary" id="empty-btn">${ctaLabel}</button>` : ''}
+  `;
+
+  if (ctaLabel && ctaAction) {
+    el.querySelector('#empty-btn')?.addEventListener('click', ctaAction);
+  }
+  return el;
+}
+
+// ---- Reusable Skeleton Grid ----
+export function renderSkeletonGrid(count = 4) {
+  const grid = document.createElement('div');
+  grid.style.display = 'grid';
+  grid.style.gridTemplateColumns = '1fr 1fr';
+  grid.style.gap = '12px';
+  grid.style.padding = '16px';
+
+  for (let i = 0; i < count; i++) {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.style.padding = '0';
+    card.style.overflow = 'hidden';
+    card.innerHTML = `
+      <div class="skeleton" style="height:150px;width:100%"></div>
+      <div style="padding:12px;display:flex;flex-direction:column;gap:8px">
+        <div class="skeleton" style="height:12px;width:50%"></div>
+        <div class="skeleton" style="height:14px;width:90%"></div>
+        <div class="skeleton" style="height:16px;width:40%"></div>
+      </div>
+    `;
+    grid.appendChild(card);
+  }
+  return grid;
+}
+
+// ---- Modal Component ----
+export function showModal(title, contentHtml, footerHtml = '') {
+  let container = document.getElementById('modal-container');
+  if (!container) {
+    container = document.createElement('div');
+    container.id = 'modal-container';
+    document.body.appendChild(container);
+  }
+
+  container.innerHTML = `
+    <div class="modal-overlay" id="modal-overlay">
+      <div class="modal-content">
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--border)">
+          <h3 style="font-size:16px;font-weight:700;color:var(--text);margin:0">${title}</h3>
+          <button id="modal-close" style="width:32px;height:32px;min-height:32px;border-radius:var(--radius-sm);color:var(--text-secondary);display:flex;align-items:center;justify-content:center">
+            ${icons.close}
+          </button>
+        </div>
+        <div style="padding:20px;overflow-y:auto;flex:1">${contentHtml}</div>
+        ${footerHtml ? `<div style="display:flex;justify-content:flex-end;gap:10px;padding:12px 20px;border-top:1px solid var(--border);background:var(--background)">${footerHtml}</div>` : ''}
+      </div>
+    </div>
+  `;
+
+  const close = () => { container.innerHTML = ''; };
+  container.querySelector('#modal-overlay')?.addEventListener('click', (e) => {
+    if (e.target.id === 'modal-overlay') close();
+  });
+  container.querySelector('#modal-close')?.addEventListener('click', close);
+  return { close, container };
+}
+
 // ========================================
-// Universal Floating Demo Role Switcher
+// Universal Demo Role Switcher (Compact Floating Docked Pill)
+// Positions safely without covering content or buttons
 // ========================================
 export function initUniversalDemoRoleSwitcher() {
   if (document.getElementById('universal-demo-switcher')) return;
 
-  const container = document.createElement('div');
-  container.id = 'universal-demo-switcher';
-  container.className = 'demo-role-switcher-fab';
+  const wrapper = document.createElement('div');
+  wrapper.id = 'universal-demo-switcher';
+  wrapper.className = 'demo-role-pill';
 
-  function renderSwitcher() {
+  function renderPill() {
     const currentRole = store.getRole();
     const wholesaleUser = store.getWholesaleUser();
     const isPending = wholesaleUser && wholesaleUser.status === 'pending';
 
-    let label = '🛒 Retail Customer';
-    let bg = '#0f3647';
+    let roleIcon = icons.user;
+    let label = 'Customer';
     if (currentRole === 'admin') {
-      label = '🛡️ Admin Portal';
-      bg = '#0f172a';
+      roleIcon = icons.shield;
+      label = 'Admin';
     } else if (currentRole === 'wholesale') {
-      label = isPending ? '⏳ Wholesale (Pending)' : '🏢 Wholesale (Verified)';
-      bg = isPending ? '#b45309' : '#047857';
+      roleIcon = icons.building;
+      label = isPending ? 'B2B (Pending)' : 'Wholesale';
     }
 
-    container.innerHTML = `
-      <div class="demo-switcher-dropdown" id="demo-dropdown">
-        <div style="padding:4px 8px 6px; border-bottom:1px solid #f1f5f9; font-size:11px; font-weight:800; color:#64748b; text-transform:uppercase; letter-spacing:0.5px">
-          Switch Demo Perspective
-        </div>
-        <button class="demo-role-option ${currentRole === 'customer' ? 'active' : ''}" data-role="customer">
-          <span>🛒</span>
-          <div>
-            <div style="font-size:12px;font-weight:700">Retail Customer</div>
-            <div style="font-size:10px;color:#64748b">Individual & Family Care</div>
-          </div>
-        </button>
-        <button class="demo-role-option ${currentRole === 'wholesale' && !isPending ? 'active' : ''}" data-role="wholesale-verified">
-          <span>🏢</span>
-          <div>
-            <div style="font-size:12px;font-weight:700">Wholesale (Verified)</div>
-            <div style="font-size:10px;color:#64748b">Apollo Pharmacy (Gold Tier)</div>
-          </div>
-        </button>
-        <button class="demo-role-option ${currentRole === 'wholesale' && isPending ? 'active' : ''}" data-role="wholesale-pending">
-          <span>⏳</span>
-          <div>
-            <div style="font-size:12px;font-weight:700">Wholesale (Pending)</div>
-            <div style="font-size:10px;color:#64748b">CareMed Surgical (Under Review)</div>
-          </div>
-        </button>
-        <button class="demo-role-option ${currentRole === 'admin' ? 'active' : ''}" data-role="admin">
-          <span>🛡️</span>
-          <div>
-            <div style="font-size:12px;font-weight:700">Admin Dashboard</div>
-            <div style="font-size:10px;color:#64748b">Catalog, Orders, Verification</div>
-          </div>
-        </button>
-      </div>
-      <div class="demo-switcher-pill" id="demo-toggle-btn" style="background:${bg}">
+    wrapper.innerHTML = `
+      <div class="demo-role-pill-trigger" id="demo-pill-trigger" title="Switch Demo Perspective">
+        <span style="display:flex;align-items:center">${roleIcon}</span>
         <span>${label}</span>
-        <span style="font-size:10px;opacity:0.8">⇄ Switch</span>
+        <span style="display:flex;align-items:center;opacity:0.7">${icons.chevronUp}</span>
+      </div>
+
+      <div class="demo-role-menu" id="demo-role-menu">
+        <div class="demo-role-menu-title">Switch Perspective</div>
+
+        <div class="demo-role-menu-item ${currentRole === 'customer' ? 'active' : ''}" data-target="customer">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span>${icons.user}</span>
+            <span>Retail Customer</span>
+          </div>
+          ${currentRole === 'customer' ? icons.check : ''}
+        </div>
+
+        <div class="demo-role-menu-item ${currentRole === 'wholesale' && !isPending ? 'active' : ''}" data-target="wholesale-verified">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span>${icons.building}</span>
+            <span>Wholesale (Verified)</span>
+          </div>
+          ${currentRole === 'wholesale' && !isPending ? icons.check : ''}
+        </div>
+
+        <div class="demo-role-menu-item ${currentRole === 'wholesale' && isPending ? 'active' : ''}" data-target="wholesale-pending">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span>${icons.clock}</span>
+            <span>Wholesale (Pending)</span>
+          </div>
+          ${currentRole === 'wholesale' && isPending ? icons.check : ''}
+        </div>
+
+        <div class="demo-role-menu-item ${currentRole === 'admin' ? 'active' : ''}" data-target="admin">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span>${icons.shield}</span>
+            <span>Admin Portal</span>
+          </div>
+          ${currentRole === 'admin' ? icons.check : ''}
+        </div>
       </div>
     `;
 
-    const toggleBtn = container.querySelector('#demo-toggle-btn');
-    const dropdown = container.querySelector('#demo-dropdown');
+    const trigger = wrapper.querySelector('#demo-pill-trigger');
+    const menu = wrapper.querySelector('#demo-role-menu');
 
-    toggleBtn.addEventListener('click', (e) => {
+    trigger.addEventListener('click', (e) => {
       e.stopPropagation();
-      dropdown.classList.toggle('show');
+      menu.classList.toggle('open');
     });
 
     document.addEventListener('click', (e) => {
-      if (!container.contains(e.target)) {
-        dropdown.classList.remove('show');
+      if (!wrapper.contains(e.target)) {
+        menu.classList.remove('open');
       }
     });
 
-    container.querySelectorAll('.demo-role-option').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const target = btn.dataset.role;
-        dropdown.classList.remove('show');
-
+    wrapper.querySelectorAll('.demo-role-menu-item').forEach(item => {
+      item.addEventListener('click', () => {
+        const target = item.dataset.target;
+        menu.classList.remove('open');
         if (target === 'customer') {
           store.setRole('customer');
           navigate('home');
         } else if (target === 'wholesale-verified') {
           store.setRole('wholesale');
-          // Switch user to Apollo
           const verifiedUser = store.getWholesaleBuyers().find(b => b.status === 'verified');
           if (verifiedUser) store.setWholesaleUser(verifiedUser);
           navigate('wholesale/dashboard');
         } else if (target === 'wholesale-pending') {
           store.setRole('wholesale');
-          // Switch user to Pending
           const pendingUser = store.getWholesaleBuyers().find(b => b.status === 'pending');
           if (pendingUser) store.setWholesaleUser(pendingUser);
           navigate('wholesale/verification-pending');
@@ -366,20 +409,20 @@ export function initUniversalDemoRoleSwitcher() {
           store.setRole('admin');
           navigate('admin/dashboard');
         }
-        renderSwitcher();
+        renderPill();
       });
     });
   }
 
-  renderSwitcher();
-  document.body.appendChild(container);
+  renderPill();
+  document.body.appendChild(wrapper);
 
-  store.on('role:changed', () => renderSwitcher());
-  store.on('wholesaleUser:changed', () => renderSwitcher());
+  store.on('role:changed', renderPill);
+  store.on('wholesaleUser:changed', renderPill);
 }
 
 // ========================================
-// GST Tax Invoice Modal (Printable & Downloadable)
+// GST Tax Invoice Modal (Clean & Print-Ready)
 // ========================================
 export function showGSTTaxInvoiceModal(order) {
   if (!order) return;
@@ -389,31 +432,30 @@ export function showGSTTaxInvoiceModal(order) {
       <div class="invoice-header">
         <div>
           <div class="invoice-title">OrthoCare Healthcare India Pvt Ltd</div>
-          <div style="font-size:12px;color:#475569">Certified Orthopedic & Rehabilitation Supplies</div>
-          <div style="font-size:11px;color:#64748b;margin-top:4px">
+          <div style="font-size:12px;color:var(--text-secondary)">Certified Orthopedic & Rehabilitation Supplies</div>
+          <div style="font-size:11px;color:var(--text-secondary);margin-top:4px">
             GSTIN: <strong>07AAFCO9918K1ZZ</strong> | CIN: U85110DL2024PTC391024<br>
             Plot 104, Okhla Industrial Area Phase III, New Delhi 110020
           </div>
         </div>
-        <div class="invoice-meta">
-          <div style="font-size:15px;font-weight:800;color:#0f3647">TAX INVOICE</div>
+        <div style="text-align:right">
+          <div style="font-size:16px;font-weight:800;color:var(--primary)">TAX INVOICE</div>
           <div>Invoice No: <strong>INV-${order.id}</strong></div>
           <div>Date: <strong>${order.date || '14 Sep 2026'}</strong></div>
-          <div>Order Ref: <strong>${order.id}</strong></div>
           <div>Place of Supply: <strong>${order.shippingAddress ? (order.shippingAddress.state || 'Delhi') : 'Delhi'}</strong></div>
         </div>
       </div>
 
       <div class="invoice-grid">
         <div>
-          <div style="font-weight:700;margin-bottom:4px;color:#0f3647">BILLED TO (BUYER):</div>
+          <div style="font-weight:700;margin-bottom:4px;color:var(--deep-navy)">BILLED TO (BUYER):</div>
           <div style="font-weight:600">${order.billingAddress ? (order.billingAddress.legalName || order.businessName) : (order.businessName || 'Retail Customer')}</div>
           <div>${order.billingAddress ? order.billingAddress.address : 'Registered Address'}</div>
           <div>${order.billingAddress ? `${order.billingAddress.city}, ${order.billingAddress.state} - ${order.billingAddress.pincode}` : ''}</div>
           <div style="margin-top:4px">GSTIN: <strong>${order.gstin || (order.billingAddress && order.billingAddress.gstin) || 'UNREGISTERED (B2C)'}</strong></div>
         </div>
         <div>
-          <div style="font-weight:700;margin-bottom:4px;color:#0f3647">DISPATCHED / SHIPPED TO:</div>
+          <div style="font-weight:700;margin-bottom:4px;color:var(--deep-navy)">DISPATCHED TO:</div>
           <div style="font-weight:600">${order.shippingAddress ? (order.shippingAddress.facility || order.shippingAddress.contact || 'Main Location') : 'Main Facility'}</div>
           <div>${order.shippingAddress ? order.shippingAddress.address : ''}</div>
           <div>${order.shippingAddress ? `${order.shippingAddress.city}, ${order.shippingAddress.state} - ${order.shippingAddress.pincode}` : ''}</div>
@@ -443,7 +485,7 @@ export function showGSTTaxInvoiceModal(order) {
               <tr>
                 <td>${idx + 1}</td>
                 <td><strong>${it.name || it.productName || 'Orthopedic Support Item'}</strong></td>
-                <td>${sku}<br><small style="color:#64748b">HSN: ${hsn}</small></td>
+                <td>${sku}<br><small style="color:var(--text-secondary)">HSN: ${hsn}</small></td>
                 <td><strong>${it.qty}</strong></td>
                 <td>${formatPrice(unit)}</td>
                 <td>${formatPrice(it.discount || 0)}</td>
@@ -454,11 +496,11 @@ export function showGSTTaxInvoiceModal(order) {
         </tbody>
       </table>
 
-      <div style="display:flex;justify-content:space-between;align-items:flex-start">
-        <div style="font-size:11px;color:#64748b;max-width:320px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:16px">
+        <div style="font-size:11px;color:var(--text-secondary);max-width:320px">
           <div><strong>Payment Terms:</strong> ${order.paymentMethod || '30-Day Approved B2B Credit'}</div>
           <div><strong>Status:</strong> ${order.paymentStatus || 'Verified & Invoiced'}</div>
-          <div style="margin-top:12px">
+          <div style="margin-top:8px">
             <em>This is a computer-generated tax invoice compliant with Indian GST Rules. No physical signature required.</em>
           </div>
         </div>
@@ -469,8 +511,8 @@ export function showGSTTaxInvoiceModal(order) {
             <span>${formatPrice(order.subtotal || order.total || 0)}</span>
           </div>
           ${order.bulkDiscount ? `
-            <div class="invoice-total-row" style="color:#16a34a">
-              <span>B2B Tier Discount:</span>
+            <div class="invoice-total-row" style="color:var(--success)">
+              <span>Tier Savings:</span>
               <span>- ${formatPrice(order.bulkDiscount)}</span>
             </div>
           ` : ''}
@@ -495,10 +537,10 @@ export function showGSTTaxInvoiceModal(order) {
           `}
           <div class="invoice-total-row">
             <span>Freight & Handling:</span>
-            <span>${order.shipping === 0 ? 'FREE (B2B)' : formatPrice(order.shipping || 0)}</span>
+            <span>${order.shipping === 0 ? 'FREE' : formatPrice(order.shipping || 0)}</span>
           </div>
           <div class="invoice-total-row grand">
-            <span>Invoice Total:</span>
+            <span>Total Payable:</span>
             <span>${formatPrice(order.total || 0)}</span>
           </div>
         </div>
@@ -507,12 +549,16 @@ export function showGSTTaxInvoiceModal(order) {
   `;
 
   const footerHtml = `
-    <button class="btn btn-secondary btn-sm" id="btn-print-inv">🖨️ Print Invoice</button>
-    <button class="btn btn-primary btn-sm" id="btn-dl-inv">⬇️ Download PDF</button>
-    <button class="btn btn-secondary btn-sm" id="btn-close-inv">Close</button>
+    <button class="btn btn-secondary btn-sm" id="btn-print-inv">
+      ${icons.printer} Print Invoice
+    </button>
+    <button class="btn btn-primary btn-sm" id="btn-dl-inv">
+      ${icons.download} Download PDF
+    </button>
+    <button class="btn btn-ghost btn-sm" id="btn-close-inv">Close</button>
   `;
 
-  const modal = showModal(`GST Invoice — ${order.id}`, contentHtml, footerHtml);
+  const modal = showModal(`GST Tax Invoice — ${order.id}`, contentHtml, footerHtml);
 
   document.getElementById('btn-print-inv')?.addEventListener('click', () => {
     window.print();
