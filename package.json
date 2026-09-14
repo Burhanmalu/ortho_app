@@ -10,5 +10,8 @@
   },
   "devDependencies": {
     "vite": "^8.3.0"
+  },
+  "dependencies": {
+    "expo": "^57.0.22"
   }
 }

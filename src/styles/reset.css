@@ -89,12 +89,12 @@ ul, ol {
   scrollbar-width: none;
 }
 
-/* Desktop centering */
+/* Desktop centering for mobile-first Retail & Wholesale app */
 @media (min-width: 481px) {
-  body {
+  body:not(.admin-mode) {
     background-color: #E8EFF1;
   }
-  #app {
+  body:not(.admin-mode) #app {
     box-shadow: 0 0 40px rgba(23, 32, 38, 0.08);
     border-left: 1px solid var(--color-border-light);
     border-right: 1px solid var(--color-border-light);
@@ -102,7 +102,7 @@ ul, ol {
 }
 
 @media (min-width: 768px) {
-  body {
+  body:not(.admin-mode) {
     display: flex;
     justify-content: center;
     align-items: flex-start;

@@ -1193,10 +1193,37 @@ export const products = [
   },
 ];
 
-// Helper: get products by category
-export function getProductsByCategory(categoryId) {
-  return products.filter(p => p.category === categoryId);
-}
+// Ensure wholesale and inventory properties on all products
+products.forEach((p, idx) => {
+  if (!p.sku) {
+    const catCode = (p.category || 'gen').slice(0, 2).toUpperCase();
+    p.sku = `OC-${catCode}-${String(idx + 1).padStart(3, '0')}`;
+  }
+  if (!p.moq) {
+    p.moq = p.category === 'mobility' ? 5 : (p.price > 1500 ? 10 : 20);
+  }
+  if (!p.wholesalePrice) {
+    p.wholesalePrice = Math.round(p.price * 0.75);
+  }
+  if (!p.bulkTiers) {
+    const baseW = p.wholesalePrice;
+    p.bulkTiers = [
+      { minQty: p.moq, maxQty: p.moq + 14, price: baseW, label: `${p.moq}–${p.moq + 14} Units` },
+      { minQty: p.moq + 15, maxQty: p.moq + 39, price: Math.round(baseW * 0.95), label: `${p.moq + 15}–${p.moq + 39} Units` },
+      { minQty: p.moq + 40, maxQty: p.moq + 89, price: Math.round(baseW * 0.92), label: `${p.moq + 40}–${p.moq + 89} Units` },
+      { minQty: p.moq + 90, maxQty: null, price: Math.round(baseW * 0.88), label: `${p.moq + 90}+ Units` }
+    ];
+  }
+  if (p.stock === undefined) {
+    p.stock = (idx === 3 || idx === 11) ? 14 : (idx === 7 ? 0 : 180 + ((idx * 17) % 240));
+  }
+  if (!p.reservedStock) p.reservedStock = Math.round(p.stock * 0.1);
+  if (!p.wholesaleStock) p.wholesaleStock = Math.max(0, p.stock - p.reservedStock);
+  if (!p.lowStockThreshold) p.lowStockThreshold = 25;
+  if (!p.cartonQty) p.cartonQty = p.category === 'mobility' ? 5 : 25;
+  if (!p.packagingInfo) p.packagingInfo = 'Master Corrugated Export Carton with Individual Tamper-evident Seal';
+  if (!p.deliveryTimeline) p.deliveryTimeline = '2–4 Business Days across India (Air/Road Logistics)';
+});
 
 // Helper: get product by ID
 export function getProductById(productId) {
@@ -1210,18 +1237,19 @@ export function searchProducts(query) {
     p.name.toLowerCase().includes(q) ||
     p.brand.toLowerCase().includes(q) ||
     p.category.toLowerCase().includes(q) ||
+    (p.sku && p.sku.toLowerCase().includes(q)) ||
     p.material.toLowerCase().includes(q)
   );
 }
 
-// Helper: get best sellers (top rated with high reviews)
+// Helper: get best sellers
 export function getBestSellers() {
   return [...products]
     .sort((a, b) => (b.rating * b.reviews) - (a.rating * a.reviews))
     .slice(0, 8);
 }
 
-// Helper: get trending (highest discount)
+// Helper: get trending
 export function getTrending() {
   return [...products]
     .sort((a, b) => b.discount - a.discount)
@@ -1238,7 +1266,34 @@ export function getRehabPicks() {
   return products.filter(p => p.category === 'rehab' || p.category === 'pain-relief').slice(0, 4);
 }
 
+// Helper: get wholesale tier price for product based on quantity
+export function getWholesaleTierPrice(productOrId, qty) {
+  const p = typeof productOrId === 'string' ? getProductById(productOrId) : productOrId;
+  if (!p) return 0;
+  const quantity = Math.max(1, Number(qty) || 1);
+  
+  if (quantity < p.moq) {
+    return p.price; // retail price if below MOQ
+  }
+  
+  // Find matching tier
+  for (let i = p.bulkTiers.length - 1; i >= 0; i--) {
+    const tier = p.bulkTiers[i];
+    if (quantity >= tier.minQty && (tier.maxQty === null || quantity <= tier.maxQty)) {
+      return tier.price;
+    }
+  }
+  return p.wholesalePrice;
+}
+
+// Helper: get products by category
+export function getProductsByCategory(cat) {
+  if (!cat || cat === 'all') return products;
+  return products.filter(p => p.category === cat);
+}
+
 // Format price
 export function formatPrice(amount) {
-  return '₹' + amount.toLocaleString('en-IN');
+  const num = Number(amount) || 0;
+  return '₹' + num.toLocaleString('en-IN');
 }

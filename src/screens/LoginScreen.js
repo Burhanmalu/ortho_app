@@ -32,7 +32,31 @@ export default function LoginScreen(appEl) {
           <span class="input-icon">📱</span>
           <input type="tel" id="login-phone" placeholder="Enter mobile number" maxlength="10" />
         </div>
-        <button class="btn btn-primary btn-block btn-lg" id="login-continue">Continue</button>
+        <button class="btn btn-primary btn-block btn-lg" id="login-continue">Continue as Customer</button>
+      </div>
+
+      <!-- Prominent Business Buyer Section -->
+      <div style="background:#f0fdfa; border:2px solid #0d9488; border-radius:14px; padding:16px; margin:20px 0; text-align:center">
+        <div style="font-size:12px; font-weight:800; color:#0f766e; text-transform:uppercase; letter-spacing:0.5px">
+          🏥 Are you a Business Buyer?
+        </div>
+        <p style="font-size:12px; color:#134e4a; margin:6px 0 14px">
+          Hospitals, Clinics, Pharmacies & Distributors get wholesale pricing, bulk discounts, and 30-day credit.
+        </p>
+        <div style="display:flex; flex-direction:column; gap:8px">
+          <button type="button" class="btn btn-block btn-sm" id="btn-goto-wholesale-reg" style="background:#0d9488; color:#ffffff; font-weight:700; padding:10px">
+            Register as Wholesale Buyer →
+          </button>
+          <div style="display:flex; justify-content:center; gap:16px; margin-top:4px">
+            <a href="#/wholesale/login" id="btn-goto-wholesale-login" style="font-size:12px; font-weight:700; color:#0f766e">
+              Wholesale Partner Login
+            </a>
+            <span style="color:#cbd5e1">•</span>
+            <a href="#/home" id="btn-shop-customer-fast" style="font-size:12px; font-weight:700; color:#64748b">
+              Shop as Customer
+            </a>
+          </div>
+        </div>
       </div>
 
       <div class="login-divider">or continue with</div>
@@ -51,6 +75,19 @@ export default function LoginScreen(appEl) {
         <p>By continuing, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></p>
       </div>
     `;
+
+    el.querySelector('#btn-goto-wholesale-reg').addEventListener('click', () => {
+      navigate('wholesale/register');
+    });
+    el.querySelector('#btn-goto-wholesale-login').addEventListener('click', (e) => {
+      e.preventDefault();
+      navigate('wholesale/login');
+    });
+    el.querySelector('#btn-shop-customer-fast').addEventListener('click', (e) => {
+      e.preventDefault();
+      store.setLoggedIn(true);
+      navigate('home');
+    });
 
     el.querySelector('#login-continue').addEventListener('click', () => {
       const phone = el.querySelector('#login-phone').value;
